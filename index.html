@@ -1,232 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ELORA NOX</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#100719;
+    color:#fff;
+    font-family:Arial,sans-serif;
+}
+
+/* HEADER */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#100719;
+    border-bottom:1px solid #3c2440;
+}
+
+.navbar{
+    max-width:1200px;
+    margin:auto;
+    height:75px;
+    padding:0 25px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    font-family:Georgia,serif;
+    color:#dca1b8;
+    font-size:28px;
+    letter-spacing:5px;
+}
+
+nav{
+    display:flex;
+    gap:25px;
+}
+
+nav a{
+    color:#fff;
+    text-decoration:none;
+    font-size:12px;
+    letter-spacing:1px;
+}
+
+nav a:hover{
+    color:#dca1b8;
+}
+
+.header-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.account-btn,
+.cart-btn{
+    background:transparent;
+    border:1px solid #dca1b8;
+    color:#dca1b8;
+    padding:10px 14px;
+    cursor:pointer;
+}
+
+/* HERO */
+
+.hero{
+    min-height:650px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    padding:50px 20px;
+
+    background:
+    radial-gradient(circle at center,#351b42 0%,#100719 60%);
+}
+
+.hero-content{
+    max-width:800px;
+}
+
+.moon{
+    width:105px;
+    height:105px;
+
+    border:2px solid #dca1b8;
+    border-radius:50%;
+
+    margin:0 auto 30px;
+
+    position:relative;
+}
+
+.moon:after{
+    content:"";
+
+    position:absolute;
+
+    width:95px;
+    height:95px;
+
+    background:#100719;
+
+    border-radius:50%;
+
+    left:27px;
+    top:-13px;
+}
+
+.hero-small{
+    color:#dca1b8;
+    font-size:11px;
+    letter-spacing:5px;
+}
+
+.hero h1{
+    font-family:Georgia,serif;
+    font-weight:normal;
+
+    font-size:clamp(55px,10vw,110px);
+
+    letter-spacing:8px;
+
+    margin:25px 0;
+}
+
+.hero p{
+    color:#c1b0c0;
+
+    max-width:620px;
+
+    margin:auto;
+
+    line-height:1.8;
+}
+
+.hero-buttons{
+    margin-top:30px;
+}
+
+.button{
+    display:inline-block;
+
+    padding:14px 28px;
+
+    margin:5px;
+
+    border:1px solid #dca1b8;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    font-size:12px;
+}
+
+.button.primary{
+    background:#dca1b8;
+    color:#16091c;
+}
+
+/* SECTIONS */
+
+section{
+    max-width:1200px;
+    margin:auto;
+
+    padding:90px 25px;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+.section-title small{
+    color:#dca1b8;
+    letter-spacing:4px;
+    font-size:10px;
+}
+
+.section-title h2{
+    font-family:Georgia,serif;
+
+    font-size:50px;
+
+    font-weight:normal;
+
+    margin-top:10px;
+}
+
+/* CATEGORIES */
+
+.categories{
+    display:grid;
+
+    grid-template-columns:repeat(6,1fr);
+
+    gap:12px;
+}
+
+.category{
+    min-height:130px;
+
+    border:1px solid #3c2440;
+
+    background:#1a0d24;
+
+    padding:20px;
+
+    display:flex;
+    align-items:flex-end;
+
+    transition:.3s;
+}
+
+.category:hover{
+    transform:translateY(-5px);
+
+    border-color:#dca1b8;
+}
+
+.category span{
+    font-family:Georgia,serif;
+    font-size:20px;
+}
+
+/* PRODUCTS */
+
+.products{
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+}
+
+.product{
+    background:#1a0d24;
+
+    border:1px solid #392039;
+
+    overflow:hidden;
+
+    transition:.3s;
+}
+
+.product:hover{
+    transform:translateY(-6px);
+
+    border-color:#dca1b8;
+}
+
+.product-image{
+    height:260px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+    radial-gradient(circle,#47254f,#170a20);
+}
+
+.product-symbol{
+    font-size:70px;
+
+    color:#dca1b8;
+
+    text-shadow:0 0 25px #8c526d;
+}
+
+.product-info{
+    padding:20px;
+}
+
+.product-info h3{
+    font-family:Georgia,serif;
+
+    font-size:23px;
+
+    font-weight:normal;
+}
+
+.product-category{
+    color:#988799;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    margin-top:7px;
+}
+
+.price{
+    color:#dca1b8;
+
+    margin:13px 0 17px;
+}
+
+.add-button{
+    width:100%;
+
+    padding:12px;
+
+    background:#dca1b8;
+
+    color:#16091c;
+
+    border:0;<div class="category" onclick="filterProducts('Anklets')">
+<div class="category-icon">∞</div>
+<h3>ANKLETS</h3>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- PRODUCTS -->
+
+<section id="shop">
+
+<div class="section-inner">
+
+<div class="section-heading">
+
+<small>THE COLLECTION</small>
+
+<h2>Pieces After Dark</h2>
+
+<p>
+Uncommon jewelry with a dreamy edge.
+</p>
+
+</div>
+
+<div class="product-grid" id="productGrid"></div>
+
+</div>
+
+</section>
+
+
+<!-- STORY -->
+
+<section class="story" id="story">
+
+<div class="section-inner">
+
+<div class="story-grid">
+
+<div class="story-art">
+<span>☾</span>
+</div>
+
+<div class="story-text">
+
+<small>THE ELORA NOX WORLD</small>
+
+<h2>Wear your mystery.</h2>
+
+<p>
+ELORA NOX was created for girls who don't need
+permission to be different.
+</p>
+
+<p>
+Our pieces blend moonlit fantasy with modern,
+effortless styling — jewelry you can wear with
+your everyday look or save for the night.
+</p>
+
+<div class="quote">
+"You don't have to fit the room.
+You can become the reason they remember it."
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- NEWSLETTER -->
+
+<section class="newsletter">
+
+<div class="section-inner">
+
+<h2>Stay in the night.</h2>
+
+<p>
+New drops, limited pieces and little secrets
+from ELORA NOX.
+</p>
+
+<form class="newsletter-form" onsubmit="subscribe(event)">
+
+<input
+type="email"
+id="email"
+placeholder="Your email address"
+required
+>
+
+<button>JOIN</button>
+
+</form>
+
+</div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<div class="footer-grid">
+
+<div class="footer-brand">
+
+<h3>ELORA NOX</h3>
+
+<p>
+Dreamy jewelry for the girl who makes
+her own rules.
+</p>
+
+</div>
+
+<div class="footer-column">
+
+<h4>SHOP</h4>
+
+<a href="#shop">New Arrivals</a>
+<a href="#shop">Best Sellers</a>
+<a href="#categories">Categories</a>
+
+</div>
+
+<div class="footer-column">
+
+<h4>INFO</h4>
+
+<a href="#story">Our Story</a>
+<a href="#home">Contact</a>
+<a href="#home">Shipping</a>
+
+</div>
+
+</div>
+
+<div class="copyright">
+© 2026 ELORA NOX. All rights reserved.
+</div>
+
+</footer>
+
+
+<!-- CART -->
+
+<div class="overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<aside class="cart" id="cart">
+
+<div class="cart-header">
+
+<h2>Your Bag</h2>
+
+<button class="close" onclick="closeCart()">×</button>
+
+</div>
+
+<div class="cart-items" id="cartItems"></div>
+
+<div class="cart-footer">
+
+<div class="total">
+
+<span>Total</span>
+
+<strong id="cartTotal">$0.00</strong>
+
+</div>
+
+<button class="checkout" onclick="checkout()">
+CHECKOUT
+</button>
+
+</div>
+
+</aside>
+
+
+<!-- AUTH MODAL -->
+
+<div class="modal-overlay" id="authModal">
+
+<div class="modal">
+
+<button class="modal-close" onclick="closeAuth()">×</button>
+
+<h2 id="authTitle">Welcome</h2>
+
+<p class="modal-subtitle" id="authSubtitle">
+Sign in to your ELORA NOX account.
+</p>
+
+
+<button class="google-btn" onclick="googleLogin()">
+Continue with Google
+</button>
+
+
+<div class="divider">
+OR
+</div>
+
+
+<input
+class="input"
+type="email"
+id="authEmail"
+placeholder="Email address"
+>
+
+
+<input
+class="input"
+type="password"
+id="authPassword"
+placeholder="Password"
+>
+
+
+<div class="auth-message" id="authMessage"></div>
+
+
+<button class="auth-btn" onclick="emailAuth()">
+<span id="authActionText">SIGN IN</span>
+</button>
+
+
+<button class="switch-auth" onclick="toggleAuthMode()">
+Create an account
+</button>
+
+</div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+
+<!-- FIREBASE + APP -->
+
+<script type="module">
+
 /* =========================================
-   AUTH STATE
+   FIREBASE IMPORTS
 ========================================= */
 
-onAuthStateChanged(auth,user=>{
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-const accountButton =
+import { getAnalytics }
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPcursor:pointer;
+}
+
+.add-button:hover{
+    background:#edb6ca;
+}
+
+/* STORY */
+
+.story{
+    max-width:750px;
+
+    text-align:center;
+}
+
+.story p{
+    color:#c1b0c0;
+
+    line-height:2;
+}
+
+/* NEWSLETTER */
+
+.newsletter{
+    text-align:center;
+
+    background:#1a0d24;
+
+    border-top:1px solid #3c2440;
+    border-bottom:1px solid #3c2440;
+}
+
+.newsletter input{
+    width:280px;
+
+    max-width:80%;
+
+    padding:14px;
+
+    background:#100719;
+
+    color:white;
+
+    border:1px solid #493047;
+}
+
+.newsletter button{
+    padding:14px 20px;
+
+    border:0;
+
+    background:#dca1b8;
+
+    color:#16091c;
+
+    cursor:pointer;
+}
+
+/* CART */
+
+.cart-panel{
+    position:fixed;
+
+    top:0;
+    right:-420px;
+
+    width:400px;
+    max-width:90%;
+
+    height:100vh;
+
+    background:#180b21;
+
+    z-index:3000;
+
+    padding:30px;
+
+    border-left:1px solid #4b2b4c;
+
+    transition:.3s;
+}
+
+.cart-panel.open{
+    right:0;
+}
+
+.close{
+    float:right;
+
+    background:none;
+
+    border:0;
+
+    color:white;
+
+    font-size:28px;
+
+    cursor:pointer;
+}
+
+.cart-panel h2{
+    font-family:Georgia,serif;
+
+    font-size:35px;
+
+    font-weight:normal;
+}
+
+.cart-items{
+    margin-top:30px;
+}
+
+.cart-item{
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #392039;
+}
+
+.cart-total{
+    margin-top:25px;
+
+    color:#dca1b8;
+
+    font-size:18px;
+}
+
+.checkout{
+    width:100%;
+
+    margin-top:20px;
+
+    padding:14px;
+
+    background:#dca1b8;
+
+    border:0;
+
+    cursor:pointer;
+}
+
+/* LOGIN */
+
+.login-box{
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.75);
+
+    z-index:5000;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+}
+
+.login-box.show{
+    display:flex;
+}
+
+.login-content{
+    width:400px;
+
+    max-width:100%;
+
+    background:#1a0d24;
+
+    border:1px solid #dca1b8;
+
+    padding:35px;
+
+    text-align:center;
+}
+
+.login-content h2{
+    font-family:Georgia,serif;
+
+    font-size:40px;
+
+    font-weight:normal;
+
+    color:#dca1b8;
+
+    margin-bottom:10px;
+}
+
+.login-content p{
+    color:#bbaabd;
+
+    font-size:13px;
+
+    margin-bottom:25px;
+}
+
+.google-button{
+    width:100%;
+
+    padding:14px;
+
+    border:0;
+
+    background:white;
+
+    color:#222;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+.close-login{
+    margin-top:15px;
+
+    background:none;
+
+    border:0;
+
+    color:#aaa;
+
+    cursor:pointer;
+}
+
+/* FOOTER */
+
+footer{
+    text-align:center;
+
+    padding:35px 20px;
+
+    color:#857486;
+
+    font-size:12px;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+    nav{
+        display:none;
+    }
+
+    .categories{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .products{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:500px){
+
+    .products{
+        grid-template-columns:1fr;
+    }
+
+    .logo{
+        font-size:21px;
+    }
+
+    .account-btn{
+        font-size:10px;
+        padding:8px;
+    }
+
+    .cart-btn{
+        font-size:10px;
+        padding:8px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="navbar">
+
+<div class="logo">
+ELORA NOX
+</div>
+
+
+<nav>
+
+<a href="#home">HOME</a>
+
+<a href="#shop">SHOP</a>
+
+<a href="#categories">CATEGORIES</a>
+
+<a href="#story">OUR STORY</a>
+
+</nav>
+
+
+<div class="header-buttons">
+
+<button
+class="account-btn"
+id="accountButton"
+onclick="openLogin()">
+
+ACCOUNT
+
+</button>
+
+
+<button
+class="cart-btn"
+onclick="openCart()">
+
+BAG (<span id="cartCount">0</span>)
+
+</button>
+
+</div>
+
+</div>
+
+</header>
+
+
+
+<section class="hero" id="home">
+
+<div class="hero-content">
+
+<div class="moon"></div>
+
+<div class="hero-small">
+DREAM • MYSTERY • JEWELRY
+</div>
+
+<h1>
+ELORA NOX
+</h1>
+
+<p>
+Jewelry for the girl who makes her own rules.
+Discover mysterious, feminine and unforgettable pieces
+made for your own story.
+</p>
+
+<div class="hero-buttons">
+
+<a href="#shop" class="button primary">
+SHOP NOW
+</a>
+
+<a href="#story" class="button">
+OUR STORY
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<section id="categories">
+
+<div class="section-title">
+
+<small>EXPLORE</small>
+
+<h2>
+Categories
+</h2>
+
+</div>
+
+
+<div class="categories"><button
+class="close"
+onclick="closeCart()">
+
+×
+
+</button>
+
+<h2>
+Your Bag
+</h2>
+
+<div
+class="cart-items"
+id="cartItems">
+
+Your bag is empty.
+
+</div>
+
+<div class="cart-total">
+
+Total: $
+<span id="cartTotal">0</span>
+
+</div>
+
+<button
+class="checkout"
+onclick="checkout()">
+
+CHECKOUT
+
+</button>
+
+</div>
+
+
+
+<!-- LOGIN -->
+
+<div
+class="login-box"
+id="loginBox">
+
+<div class="login-content">
+
+<h2>
+ELORA NOX
+</h2>
+
+<p>
+Sign in to your account
+</p>
+
+<button
+class="google-button"
+onclick="googleLogin()">
+
+Continue with Google
+
+</button>
+
+<br>
+
+<button
+class="close-login"
+onclick="closeLogin()">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+import { getAnalytics }
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+
+import {
+getAuth,
+GoogleAuthProvider,
+signInWithPopup,
+signOut,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyBrMw31xVAszqXUvP6AiufOGL_6XdYoaM4",
+
+authDomain:
+"myai-bd693.firebaseapp.com",
+
+projectId:
+"myai-bd693",
+
+storageBucket:
+"myai-bd693.firebasestorage.app",
+
+messagingSenderId:
+"305975730704",
+
+appId:
+"1:305975730704:web:9771b3873c59f638a06095",
+
+measurementId:
+"G-N0VN5C976D"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+getAnalytics(app);
+
+const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+
+
+window.googleLogin = async function(){
+
+try{
+
+const result =
+await signInWithPopup(auth,provider);
+
+const user =
+result.user;
+
+alert(
+"Welcome to Elora Nox, "
++
+(user.displayName || "beautiful")
++
+" ✦"
+);
+
+closeLogin();
+
+}
+catch(error){
+
+console.error(error);
+
+alert(
+"Login failed: "
++
+error.message
+);
+
+}
+
+};
+
+
+window.logout = async function(){
+
+try{
+
+await signOut(auth);
+
+alert("You have been logged out.");
+
+}
+catch(error){
+
+console.error(error);
+
+}
+
+};
+
+
+onAuthStateChanged(auth,function(user){
+
+const button =
 document.getElementById("accountButton");
 
 if(user){
 
-accountButton.innerHTML=
-<span class="account-text">ACCOUNT</span> ✓;
+button.innerText =
+user.displayName
+?
+user.displayName.split(" ")[0]
+:
+"ACCOUNT";
 
-window.currentEloraUser=user;
+button.onclick = window.logout;
 
-}else{
+}
+else{
 
-accountButton.innerHTML=
-<span class="account-text">ACCOUNT</span>;
+button.innerText =
+"ACCOUNT";
 
-window.currentEloraUser=null;
+button.onclick =
+window.openLogin;
 
 }
 
 });
 
+</script>
 
-/* =========================================
-   FIRESTORE ORDER
-========================================= */
 
-async function saveOrder(){
 
-const user=auth.currentUser;
+<script>
 
-if(!user){
+/* CART */
 
-openAuth();
+let cart = [];
 
-showToast(
-"Please sign in before checkout."
+
+function addToCart(name,price){
+
+cart.push({
+name:name,
+price:price
+});
+
+updateCart();
+
+alert(
+name +
+" added to your bag ✦"
 );
+
+}
+
+
+function updateCart(){
+
+document.getElementById("cartCount")
+.innerText = cart.length;
+
+const items =
+document.getElementById("cartItems");
+
+let total = 0;
+
+if(cart.length === 0){
+
+items.innerHTML =
+"Your bag is empty.";
+
+}
+else{
+
+items.innerHTML = "";
+
+cart.forEach(function(item){
+
+total += item.price;
+
+const div =
+document.createElement("div");
+
+div.className =
+"cart-item";
+
+div.innerHTML =
+"<span>"
++
+item.name
++
+"</span>"
++
+"<span>$"
++
+item.price
++
+"</span>";
+
+items.appendChild(div);
+
+});
+
+}
+
+document.getElementById("cartTotal")
+.innerText = total;
+
+}
+
+
+function openCart(){
+
+document
+.getElementById("cartPanel")
+.classList.add("open");
+
+}
+
+
+function closeCart(){
+
+document
+.getElementById("cartPanel")
+.classList.remove("open");
+
+}
+
+
+/* LOGIN WINDOW */
+
+function openLogin(){
+
+document
+.getElementById("loginBox")
+.classList.add("show");
+
+}
+
+
+window.openLogin =
+openLogin;
+
+
+function closeLogin(){
+
+document
+.getElementById("loginBox")
+.classList.remove("show");
+
+}
+
+
+/* CHECKOUT */
+
+function checkout(){
+
+if(cart.length === 0){
+
+alert("Your bag is empty.");
 
 return;
 
 }
 
+alert(
+"Your order is ready. Payment will be connected next."
+);
 
-if(cart.length===0){
+}
 
-showToast("Your bag is empty.");
+
+/* NEWSLETTER */
+
+function subscribe(){
+
+const email =
+document.getElementById("email").value;
+
+if(!email){
+
+alert("Please enter your email.");
 
 return;
 
 }
 
-
-const total =
-cart.reduce(
-(sum,item)=>
-sum + item.price*item.quantity,
-0
+alert(
+"Welcome to Elora Nox ✦"
 );
 
-
-const orderData={
-
-userId:user.uid,
-
-email:user.email,
-
-customerName:
-user.displayName || "",
-
-items:cart.map(item=>({
-
-productId:item.id,
-
-name:item.name,
-
-price:item.price,
-
-quantity:item.quantity
-
-})),
-
-total:total,
-
-status:"pending",
-
-createdAt:serverTimestamp()
-
-};
-
-
-try{
-
-const orderRef =
-await addDoc(
-collection(db,"orders"),
-orderData
-);
-
-cart=[];
-
-saveCart();
-updateCart();
-closeCart();
-
-showToast(
-"Order received • #"+
-orderRef.id.slice(0,8)
-);
-
-}catch(error){
-
-console.error(error);
-
-showToast(
-"Could not save your order."
-);
+document.getElementById("email").value = "";
 
 }
-
-}
-
-
-window.checkout=function(){
-
-saveOrder();
-
-};
-
-
-/* =========================================
-   NEWSLETTER
-========================================= */
-
-window.subscribe=function(event){
-
-event.preventDefault();
-
-const input =
-document.getElementById("email");
-
-if(!input.value) return;
-
-showToast(
-"Welcome to the ELORA NOX night."
-);
-
-input.value="";
-
-};
-
-
-/* =========================================
-   TOAST
-========================================= */
-
-let toastTimer;
-
-function showToast(message){
-
-const toast =
-document.getElementById("toast");
-
-toast.textContent=message;
-
-toast.classList.add("show");
-
-clearTimeout(toastTimer);
-
-toastTimer=setTimeout(()=>{
-
-toast.classList.remove("show");
-
-},2800);
-
-}
-
-
-/* =========================================
-   FIREBASE ERROR TEXT
-========================================= */
-
-function getFirebaseError(error){
-
-switch(error.code){
-
-case "auth/invalid-email":
-return "Please enter a valid email.";
-
-case "auth/user-not-found":
-return "No account was found with this email.";
-
-case "auth/wrong-password":
-return "Incorrect password.";
-
-case "auth/email-already-in-use":
-return "An account already exists with this email.";
-
-case "auth/weak-password":
-return "Password should be at least 6 characters.";
-
-case "auth/popup-closed-by-user":
-return "Google sign-in was cancelled.";
-
-case "auth/popup-blocked":
-return "Your browser blocked the Google popup.";
-
-default:
-return error.message || "Something went wrong.";
-
-}
-
-}
-
-
-/* =========================================
-   INITIALIZE
-========================================= */
-
-displayProducts();
-
-updateCart();
 
 </script>
+
 
 </body>
 </html>
