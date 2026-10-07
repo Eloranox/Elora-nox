@@ -1,13 +1,73 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>سایت خرید و فروش</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+    .btn-google { background: #4285F4; color: white; margin-bottom: 15px; }
+    .btn-google:hover { background: #3367d6; }
+    .btn-submit { background: #28a745; color: white; }
+    .btn-submit:hover { background: #218838; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .ad-card { border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-top: 15px; background: #fafafa; }
+    .ad-card img { max-width: 100%; height: auto; border-radius: 6px; margin-top: 10px; }
+    .price { color: #e53935; font-weight: bold; font-size: 1.2em; margin: 10px 0; }
+    #adsList { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
+    .user-email { font-size: 12px; color: #777; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- بخش ورود -->
+  <button id="loginBtn" class="btn-google">ورود با حساب گوگل</button>
+  <p id="userInfo" style="color: #28a745; font-weight: bold; text-align: center; margin-bottom: 20px;"></p>
+
+  <!-- فرم ثبت آگهی -->
+  <h2>ثبت آگهی جدید</h2>
+  <form id="adForm">
+    <div class="form-group">
+      <label>عنوان آگهی</label>
+      <input type="text" id="title" required placeholder="مثلاً: گوشی موبایل سامسونگ">
+    </div>
+    <div class="form-group">
+      <label>قیمت (تومان)</label>
+      <input type="number" id="price" required placeholder="مثلاً: 15000000">
+    </div>
+    <div class="form-group">
+      <label>توضیحات</label>
+      <textarea id="description" rows="3" required placeholder="مشخصات محصول را بنویسید..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>عکس محصول</label>
+      <input type="file" id="image" accept="image/*" required>
+    </div>
+    <button type="submit" id="submitBtn" class="btn-submit">ثبت نهایی آگهی</button>
+  </form>
+
+  <!-- لیست آگهی‌ها -->
+  <div id="adsList">
+    <h2>آگهی‌های اخیر</h2>
+    <div id="adsContainer">
+      <p style="color: gray;">در حال بارگذاری آگهی‌ها...</p>
+    </div>
+  </div>
+</div>
+
 <script type="module">
-  import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  // ایمپورت کتابخانه‌های پایدار فایربیس
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
-  import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
+  // تنظیمات شما
   const firebaseConfig = {
     apiKey: "AIzaSyBrMw31xVAszqXUvP6AiufOGL_6XdYoaM4",
     authDomain: "myai-bd693.firebaseapp.com",
@@ -18,27 +78,20 @@
     measurementId: "G-N0VN5C976D"
   };
 
+  // راه‌اندازی سرویس‌ها
   const app = initializeApp(firebaseConfig);
-
   const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
   const provider = new GoogleAuthProvider();
 
-  async function loginGoogle() {
-    try {
-      const result = await signInWithPopup(auth, provider);
+  let currentUser = null;
 
-      console.log("ورود موفق:", result.user);
-      alert("ورود موفق شد: " + result.user.email);
-
-    } catch (error) {
-      console.error("Google Login Error:", error);
-      alert(error.code + "\n" + error.message);
-    }
-  }
-
-  window.loginGoogle = loginGoogle;
-</script>
-
-<button onclick="loginGoogle()">
-  ورود با Google
-</button>
+  // ۱. بررسی وضعیت ورود کاربر
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    const loginBtn = document.getElementById("loginBtn");
+    const userInfo = document.getElementById("userInfo");
+    
+    if (user
+        
