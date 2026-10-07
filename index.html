@@ -1,6 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Login Test</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #090909;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .box {
+      width: 320px;
+      padding: 35px;
+      border-radius: 20px;
+      background: #151515;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(255, 0, 150, .15);
+    }
+
+    h1 {
+      margin-bottom: 25px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: white;
+      color: #111;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      transform: scale(1.02);
+    }
+
+    #user {
+      margin-top: 20px;
+      line-height: 1.8;
+    }
+
+    #logout {
+      margin-top: 15px;
+      background: #ff2b91;
+      color: white;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h1>ELORA NOX</h1>
+
+  <button id="googleLogin">
+    🔐 ورود با Google
+  </button>
+
+  <div id="user"></div>
+
+  <button id="logout">
+    خروج از حساب
+  </button>
+</div>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
   import {
     getAuth,
     GoogleAuthProvider,
@@ -9,25 +89,6 @@
     signOut
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    addDoc,
-    deleteDoc,
-    doc,
-    query,
-    orderBy,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-  import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    deleteObject
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBrMw31xVAszqXUvP6AiufOGL_6XdYoaM4",
@@ -39,32 +100,81 @@
     measurementId: "G-N0VN5C976D"
   };
 
+
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
 
   const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
 
-  const googleProvider = new GoogleAuthProvider();
+  const provider = new GoogleAuthProvider();
 
-  // فقط ورود Google
-  async function loginWithGoogle() {
+
+  const loginButton = document.getElementById("googleLogin");
+  const logoutButton = document.getElementById("logout");
+  const userDiv = document.getElementById("user");
+
+
+  loginButton.addEventListener("click", async () => {
+
     try {
-      await signInWithPopup(auth, googleProvider);
+
+      loginButton.textContent = "در حال ورود...";
+
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+
+      console.log("LOGIN SUCCESS:", user);
+
     } catch (error) {
-      console.error(error);
-      alert("ورود با Google انجام نشد.");
+
+      console.error("LOGIN ERROR:", error);
+
+      alert(
+        "ورود انجام نشد:\n\n" +
+        error.code +
+        "\n\n" +
+        error.message
+      );
+
+      loginButton.textContent = "🔐 ورود با Google";
+
     }
-  }
 
-  window.loginWithGoogle = loginWithGoogle;
-
-  window.logout = async function () {
-    await signOut(auth);
-  };
-
-  onAuthStateChanged(auth, user => {
-    console.log("User:", user);
   });
+
+
+  logoutButton.addEventListener("click", async () => {
+
+    await signOut(auth);
+
+  });
+
+
+  onAuthStateChanged(auth, (user) => {
+
+    if (user) {
+
+      userDiv.innerHTML = `
+        <strong>✅ ورود موفق</strong><br><br>
+        ${user.displayName || ""}<br>
+        ${user.email || ""}
+      `;
+
+      loginButton.style.display = "none";
+      logoutButton.style.display = "block";
+
+    } else {
+
+      userDiv.innerHTML = "";
+
+      loginButton.style.display = "block";
+      logoutButton.style.display = "none";
+
+    }
+
+  });
+
 </script>
+
+</body>
+</html>
