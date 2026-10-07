@@ -3,103 +3,321 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>فروشگاه جیکو | مارکت‌پلیس</title>
+  <title>فروشگاه آنلاین جیکو | مارکت‌پلیس</title>
   <style>
     @font-face {
       font-family: 'Vazir';
       src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-Regular.woff2') format('woff2');
     }
-    body { font-family: 'Vazir', Tahoma, sans-serif; margin: 0; padding: 0; background-color: #f2f2f2; color: #3f4064; }
+    body {
+      font-family: 'Vazir', Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+      color: #3f4064;
+    }
     
-    header { background-color: #fff; padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-    .logo { color: #ef394e; font-size: 28px; font-weight: bold; text-decoration: none; }
-    .user-section { font-size: 14px; color: #62666d; }
-    .btn-logout { background: #f2f2f2; border: 1px solid #e0e0e2; padding: 8px 15px; border-radius: 8px; cursor: pointer; color: #ef394e; font-family: inherit; }
+    /* هدر اصلی سایت */
+    header {
+      background-color: #fff;
+      padding: 15px 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      color: #ef394e;
+      font-size: 30px;
+      font-weight: 800;
+      text-decoration: none;
+      letter-spacing: -1px;
+    }
+    .user-section {
+      font-size: 14px;
+      color: #62666d;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-logout {
+      background: #fff;
+      border: 1px solid #ef394e;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #ef394e;
+      font-family: inherit;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover {
+      background: #ef394e;
+      color: #fff;
+    }
 
-    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-    #login-overlay h1 { color: #ef394e; font-size: 40px; margin-bottom: 10px; }
-    .btn-google { background-color: #ef394e; color: #fff; border: none; padding: 15px 30px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit; }
+    /* پرده ورود اجباری با گوگل */
+    #login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #login-overlay h1 {
+      color: #ef394e;
+      font-size: 48px;
+      margin-bottom: 5px;
+    }
+    #login-overlay p {
+      color: #62666d;
+      margin-bottom: 25px;
+      font-size: 15px;
+    }
+    .btn-google {
+      background-color: #ef394e;
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: inherit;
+      box-shadow: 0 4px 12px rgba(239, 57, 78, 0.3);
+      transition: transform 0.2s;
+    }
+    .btn-google:hover {
+      transform: translateY(-2px);
+    }
     
-    #main-content { display: none; max-width: 1200px; margin: 20px auto; padding: 0 15px; display: flex; gap: 20px; flex-wrap: wrap; }
+    /* بدنه اصلی مارکت‌پلیس */
+    #main-content {
+      display: none;
+      max-width: 1250px;
+      margin: 25px auto;
+      padding: 0 15px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
     
-    .ad-form-container { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); width: 100%; max-width: 350px; height: fit-content; }
-    .ad-form-container h2 { font-size: 18px; border-bottom: 2px solid #ef394e; padding-bottom: 10px; margin-top: 0; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; font-size: 13px; margin-bottom: 8px; color: #62666d; }
-    input, textarea, select { width: 100%; padding: 12px; border: 1px solid #e0e0e2; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 14px; background: #fafafa; }
-    input:focus, textarea:focus { outline: none; border-color: #ef394e; }
+    /* فرم ثبت محصول فروشگاه */
+    .ad-form-container {
+      background: #fff;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      width: 100%;
+      max-width: 360px;
+      height: fit-content;
+      box-sizing: border-box;
+    }
+    .ad-form-container h2 {
+      font-size: 18px;
+      border-bottom: 2px solid #ef394e;
+      padding-bottom: 8px;
+      margin-top: 0;
+      color: #000;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #62666d;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #e0e0e2;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 14px;
+      background: #fafafa;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #ef394e;
+      background: #fff;
+    }
     
-    /* استایل بخش محاسبه کارمزد */
-    .fee-calc { font-size: 12px; margin-top: 8px; padding: 8px; background: #f0f8ff; border-radius: 6px; border: 1px solid #cce5ff; display: none; line-height: 1.8; }
+    /* محاسبات آنلاین کارمزد ۵ درصد */
+    .fee-calc {
+      font-size: 12px;
+      margin-top: 8px;
+      padding: 10px;
+      background: #f0f7ff;
+      border-radius: 8px;
+      border: 1px solid #b3d7ff;
+      display: none;
+      line-height: 2;
+    }
     .fee-site { color: #ef394e; font-weight: bold; }
     .fee-store { color: #28a745; font-weight: bold; }
 
-    .btn-submit { background-color: #ef394e; color: #fff; width: 100%; border: none; padding: 14px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; font-family: inherit; margin-top: 10px; }
-    .btn-submit:disabled { background-color: #a0a0a0; }
+    .btn-submit {
+      background-color: #ef394e;
+      color: #fff;
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: inherit;
+      margin-top: 10px;
+    }
+    .btn-submit:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
 
-    .ads-feed { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; align-content: start; }
-    .product-card { background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); display: flex; flex-direction: column; position: relative; }
-    .product-image { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
-    .product-title { font-size: 14px; font-weight: bold; margin: 0 0 10px 0; color: #3f4064; line-height: 1.8; }
-    .product-price { color: #3f4064; font-size: 18px; font-weight: bold; margin-top: auto; text-align: left; }
-    .store-badge { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 11px; }
+    /* ویترین و کارت محصولات */
+    .ads-feed {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      align-content: start;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+    .product-image {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: #e0e0e0;
+    }
+    .product-title {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+      color: #3f4064;
+      line-height: 1.7;
+      height: 48px;
+      overflow: hidden;
+    }
+    .product-price {
+      color: #2a2b3d;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: auto;
+      text-align: left;
+    }
+    .currency { font-size: 12px; font-weight: normal; color: #81858b; }
+    .store-badge {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 11px;
+      backdrop-filter: blur(2px);
+    }
+    .btn-buy-sim {
+      margin-top: 12px;
+      padding: 10px;
+      border: none;
+      background: #ef394e;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
+<!-- پرده لاگین اجباری -->
 <div id="login-overlay">
   <h1>جیکو</h1>
-  <p>برای ثبت فروشگاه و فروش محصولات وارد شوید</p>
-  <button id="loginBtn" class="btn-google">ورود با گوگل</button>
+  <p>برای ثبت فروشگاه و مشاهده کالاها، ابتدا وارد حساب گوگل شوید</p>
+  <button id="loginBtn" class="btn-google">ورود با حساب گوگل</button>
 </div>
 
+<!-- هدر سایت -->
 <header id="site-header" style="display: none;">
   <a href="#" class="logo">جیکو</a>
   <div class="user-section">
-    <span id="userEmailDisplay" style="margin-left: 15px;"></span>
+    <span id="userEmailDisplay"></span>
     <button id="logoutBtn" class="btn-logout">خروج</button>
   </div>
 </header>
 
+<!-- بخش اصلی -->
 <div id="main-content">
   
-  <!-- پنل فروشنده -->
+  <!-- فرم ثبت فروشگاه و محصول -->
   <aside class="ad-form-container">
-    <h2>پنل فروشگاه شما</h2>
+    <h2>ثبت محصول جدید</h2>
     <form id="adForm">
       <div class="form-group">
-        <label>نام فروشگاه شما</label>
-        <input type="text" id="storeName" required placeholder="مثلاً: موبایل سنتر">
+        <label>نام فروشگاه</label>
+        <input type="text" id="storeName" required placeholder="مثلاً: فروشگاه دیجیتال پارس">
       </div>
       <div class="form-group">
-        <label>نام محصول</label>
-        <input type="text" id="title" required placeholder="مثلاً: قاب گوشی آیفون">
+        <label>عنوان کالا</label>
+        <input type="text" id="title" required placeholder="مثلاً: هندزفری بیسیم شیائومی">
       </div>
       <div class="form-group">
-        <label>قیمت مصرف‌کننده (تومان)</label>
-        <input type="number" id="price" required placeholder="قیمت نهایی برای مشتری">
-        <!-- نمایش زنده ۵ درصد سایت و ۹۵ درصد فروشگاه -->
+        <label>قیمت فروش به مشتری (تومان)</label>
+        <input type="number" id="price" required placeholder="مثلاً: 1200000">
+        
+        <!-- باکس محاسبات ۵ درصد کارمزد سایت -->
         <div id="feeCalcBox" class="fee-calc">
-          <div>سهم جیکو (۵٪): <span class="fee-site" id="siteFee">0</span> تومان</div>
-          <div>دریافتی فروشگاه (۹۵٪): <span class="fee-store" id="storeFee">0</span> تومان</div>
+          <div>سود سایت جیکو (۵٪): <span class="fee-site" id="siteFee">0</span> تومان</div>
+          <div>خالص دریافتی فروشگاه (۹۵٪): <span class="fee-store" id="storeFee">0</span> تومان</div>
         </div>
       </div>
       <div class="form-group">
-        <label>توضیحات</label>
-        <textarea id="description" rows="3" required></textarea>
+        <label>توضیحات محصول</label>
+        <textarea id="description" rows="3" required placeholder="مشخصات و جزئیات کالا..."></textarea>
       </div>
       <div class="form-group">
-        <label>عکس محصول</label>
+        <label>تصویر محصول</label>
         <input type="file" id="image" accept="image/*" required>
       </div>
-      <button type="submit" id="submitBtn" class="btn-submit">ثبت محصول در جیکو</button>
+      <button type="submit" id="submitBtn" class="btn-submit">انتشار در مارکت‌پلیس</button>
     </form>
   </aside>
 
-  <!-- ویترین محصولات -->
+  <!-- ویترین نمایش محصولات -->
   <main class="ads-feed" id="adsContainer"></main>
 </div>
 
+<!-- اسکریپت فایربیس -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -124,7 +342,7 @@
 
   let currentUser = null;
 
-  // وضعیت لاگین
+  // ۱. مدیریت وضعیت احراز هویت
   onAuthStateChanged(auth, (user) => {
     if (user) {
       currentUser = user;
@@ -144,7 +362,7 @@
   document.getElementById("loginBtn").addEventListener("click", () => signInWithPopup(auth, provider));
   document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
 
-  // محاسبه خودکار و زنده ۵ درصد سایت
+  // ۲. محاسبه زنده و آنلاین کارمزد ۵ درصد هنگام تایپ قیمت
   const priceInput = document.getElementById('price');
   const feeCalcBox = document.getElementById('feeCalcBox');
   const siteFeeElem = document.getElementById('siteFee');
@@ -154,8 +372,8 @@
     const val = Number(e.target.value);
     if (val > 0) {
       feeCalcBox.style.display = "block";
-      const siteCommission = val * 0.05;
-      const storeEarnings = val * 0.95;
+      const siteCommission = Math.round(val * 0.05);
+      const storeEarnings = val - siteCommission;
       
       siteFeeElem.innerText = siteCommission.toLocaleString('fa-IR');
       storeFeeElem.innerText = storeEarnings.toLocaleString('fa-IR');
@@ -164,14 +382,14 @@
     }
   });
 
-  // ثبت فرم محصول
+  // ۳. آپلود عکس و ثبت محصول در دیتابیس
   document.getElementById('adForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!currentUser) return;
 
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
-    submitBtn.innerText = "در حال ثبت...";
+    submitBtn.innerText = "در حال آپلود عکس...";
 
     try {
       const storeName = document.getElementById('storeName').value;
@@ -180,55 +398,71 @@
       const desc = document.getElementById('description').value;
       const imageFile = document.getElementById('image').files[0];
 
-      // محاسبه نهایی برای ثبت در دیتابیس
-      const siteCommission = price * 0.05;
-      const storeEarnings = price * 0.95;
+      const siteCommission = Math.round(price * 0.05);
+      const storeEarnings = price - siteCommission;
 
+      // ذخیره تصویر در Storage
       const storageRef = ref(storage, `jiko_stores/${Date.now()}_${imageFile.name}`);
       const snapshot = await uploadBytes(storageRef, imageFile);
       const imageUrl = await getDownloadURL(snapshot.ref);
 
+      submitBtn.innerText = "در حال ذخیره اطلاعات...";
+
+      // ثبت در Firestore
       await addDoc(collection(db, "jiko_store_products"), {
         storeName: storeName,
         title: title,
         fullPrice: price,
-        siteCommission: siteCommission, // سود سایت
-        storeEarnings: storeEarnings,   // سهم فروشگاه
+        siteCommission: siteCommission,
+        storeEarnings: storeEarnings,
         description: desc,
         imageUrl: imageUrl,
-        sellerId: currentUser.uid,
+        sellerUid: currentUser.uid,
+        sellerEmail: currentUser.email,
         createdAt: serverTimestamp()
       });
 
-      alert("محصول با موفقیت در فروشگاه ثبت شد.");
+      alert("محصول با موفقیت در فروشگاه جیکو منتشر شد.");
       document.getElementById('adForm').reset();
       feeCalcBox.style.display = "none";
     } catch (error) {
-      alert("خطا در ثبت اطلاعات.");
+      console.error(error);
+      alert("خطا در ثبت آگهی. لطفاً دسترسی‌های Rules فایربیس را چک کنید.");
     } finally {
       submitBtn.disabled = false;
-      submitBtn.innerText = "ثبت محصول در جیکو";
+      submitBtn.innerText = "انتشار در مارکت‌پلیس";
     }
   });
 
-  // نمایش محصولات
+  // ۴. دریافت زنده محصولات از دیتابیس
   function loadAds() {
     const q = query(collection(db, "jiko_store_products"), orderBy("createdAt", "desc"));
+    
     onSnapshot(q, (snapshot) => {
       const adsContainer = document.getElementById("adsContainer");
       adsContainer.innerHTML = "";
       
+      if (snapshot.empty) {
+        adsContainer.innerHTML = "<p style='color:#81858b; width:100%; text-align:center;'>هنوز هیچ محصولی ثبت نشده است.</p>";
+        return;
+      }
+
       snapshot.forEach((doc) => {
         const ad = doc.data();
         const card = document.createElement("div");
         card.className = "product-card";
         
+        const priceFormatted = ad.fullPrice ? Number(ad.fullPrice).toLocaleString('fa-IR') : "0";
+        const commissionFormatted = ad.siteCommission ? Number(ad.siteCommission).toLocaleString('fa-IR') : "0";
+
         card.innerHTML = `
-          <div class="store-badge">فروشگاه: ${ad.storeName}</div>
-          <img src="${ad.imageUrl}" class="product-image">
+          <div class="store-badge">${ad.storeName}</div>
+          <img src="${ad.imageUrl}" class="product-image" alt="${ad.title}">
           <h3 class="product-title">${ad.title}</h3>
-          <div class="product-price">${Number(ad.fullPrice).toLocaleString('fa-IR')} تومان</div>
-          <button style="margin-top:15px; padding:10px; border:none; background:#ef394e; color:#fff; border-radius:6px; cursor:pointer;" onclick="alert('سود جیکو از این خرید: ${Number(ad.siteCommission).toLocaleString('fa-IR')} تومان')">شبیه‌ساز خرید مشتری</button>
+          <div class="product-price">
+            ${priceFormatted} <span class="currency">تومان</span>
+          </div>
+          <button class="btn-buy-sim" onclick="alert('توضیحات: ${ad.description}\n\nسهم ۵ درصد سایت جیکو از این خرید: ${commissionFormatted} تومان')">مشاهده جزییات خرید</button>
         `;
         adsContainer.appendChild(card);
       });
