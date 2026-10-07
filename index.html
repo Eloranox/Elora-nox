@@ -1,0 +1,70 @@
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    deleteDoc,
+    doc,
+    query,
+    orderBy,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBrMw31xVAszqXUvP6AiufOGL_6XdYoaM4",
+    authDomain: "myai-bd693.firebaseapp.com",
+    projectId: "myai-bd693",
+    storageBucket: "myai-bd693.firebasestorage.app",
+    messagingSenderId: "305975730704",
+    appId: "1:305975730704:web:9771b3873c59f638a06095",
+    measurementId: "G-N0VN5C976D"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const googleProvider = new GoogleAuthProvider();
+
+  // فقط ورود Google
+  async function loginWithGoogle() {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error(error);
+      alert("ورود با Google انجام نشد.");
+    }
+  }
+
+  window.loginWithGoogle = loginWithGoogle;
+
+  window.logout = async function () {
+    await signOut(auth);
+  };
+
+  onAuthStateChanged(auth, user => {
+    console.log("User:", user);
+  });
+</script>
