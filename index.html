@@ -2,1160 +2,909 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090909">
   <title>Zivo | بازار آنلاین</title>
 
   <style>
-    :root{
-      --bg:#070707;
-      --bg2:#0c0c0c;
-      --card:#111111;
-      --card2:#171717;
-      --border:#292929;
-      --text:#fff;
-      --muted:#999;
-      --red:#ff1744;
-      --red2:#b9002c;
-      --green:#20d889;
-      --shadow:0 20px 60px rgba(0,0,0,.35);
+    :root {
+      --bg: #070707;
+      --bg2: #0c0c0c;
+      --card: #111111;
+      --card2: #171717;
+      --border: #292929;
+      --text: #ffffff;
+      --muted: #999999;
+      --red: #ff1744;
+      --red2: #b9002c;
+      --green: #20d889;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
     }
 
-    body.light{
-      --bg:#f5f5f7;
-      --bg2:#ffffff;
-      --card:#ffffff;
-      --card2:#eeeeef;
-      --border:#dedee2;
-      --text:#111;
-      --muted:#666;
-      --shadow:0 15px 40px rgba(0,0,0,.08);
+    body.light {
+      --bg: #f5f5f7;
+      --bg2: #ffffff;
+      --card: #ffffff;
+      --card2: #eeeeef;
+      --border: #dedee2;
+      --text: #111111;
+      --muted: #666666;
+      --shadow: 0 15px 40px rgba(0,0,0,.08);
     }
 
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html{
-      scroll-behavior:smooth;
+    html {
+      scroll-behavior: smooth;
     }
 
-    body{
-      background:var(--bg);
-      color:var(--text);
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-      min-height:100vh;
-      transition:.25s;
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Tahoma, Arial, sans-serif;
+      min-height: 100vh;
+      transition: background-color .25s, color .25s;
     }
 
-    button,
-    input,
-    textarea,
-    select{
-      font:inherit;
+    button, input, textarea, select {
+      font: inherit;
     }
 
-    button{
-      cursor:pointer;
+    button {
+      cursor: pointer;
     }
 
-    img{
-      max-width:100%;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    .container{
-      width:min(1240px,94%);
-      margin:auto;
+    img {
+      max-width: 100%;
     }
 
-    /* ================= HEADER ================= */
-
-    header{
-      position:sticky;
-      top:0;
-      z-index:1000;
-      border-bottom:1px solid var(--border);
-      background:rgba(7,7,7,.88);
-      backdrop-filter:blur(20px);
+    .container {
+      width: min(1240px, 94%);
+      margin: auto;
     }
 
-    body.light header{
-      background:rgba(255,255,255,.88);
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7,7,7,.88);
+      backdrop-filter: blur(20px);
     }
 
-    .header{
-      min-height:74px;
-      display:flex;
-      align-items:center;
-      gap:16px;
+    body.light header {
+      background: rgba(255,255,255,.88);
     }
 
-    .logo{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-size:25px;
-      font-weight:900;
-      min-width:110px;
+    .header {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
-    .logo-mark{
-      width:43px;
-      height:43px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      color:#fff;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 25px;
+      font-weight: 900;
+      min-width: 110px;
+    }
+
+    .logo-mark {
+      width: 43px;
+      height: 43px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(145deg, #ff1744, #78001d);
+      box-shadow: 0 0 30px rgba(255,23,68,.28);
+    }
+
+    .search {
+      position: relative;
+      flex: 1;
+    }
+
+    .search input {
+      width: 100%;
+      height: 47px;
+      border-radius: 15px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      outline: none;
+      padding: 0 46px 0 16px;
+    }
+
+    .search input:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(255,23,68,.08);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 13px;
+      opacity: .7;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      transition: .2s;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .sell-btn, .primary-btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 12px 17px;
+      background: linear-gradient(135deg, var(--red), var(--red2));
+      color: #fff;
+      font-weight: 800;
+      transition: .2s;
+    }
+
+    .sell-btn:hover, .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255,23,68,.3);
+    }
+
+    .secondary-btn {
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 12px 17px;
+      background: var(--card);
+      color: var(--text);
+      font-weight: bold;
+      transition: .2s;
+    }
+
+    .secondary-btn:hover {
+      border-color: var(--red);
+    }
+
+    /* HERO */
+    .hero {
+      margin: 28px 0 50px;
+      min-height: 440px;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
       background:
-        linear-gradient(
-          145deg,
-          #ff1744,
-          #78001d
-        );
-      box-shadow:
-        0 0 30px rgba(255,23,68,.28);
+        linear-gradient(90deg, rgba(5,5,5,.97) 0%, rgba(5,5,5,.83) 43%, rgba(5,5,5,.35) 100%),
+        url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85") center/cover;
+      display: flex;
+      align-items: center;
     }
 
-    .search{
-      position:relative;
-      flex:1;
-    }
-
-    .search input{
-      width:100%;
-      height:47px;
-      border-radius:15px;
-      border:1px solid var(--border);
-      background:var(--card);
-      color:var(--text);
-      outline:none;
-      padding:0 46px 0 16px;
-    }
-
-    .search input:focus{
-      border-color:var(--red);
-      box-shadow:
-        0 0 0 3px rgba(255,23,68,.08);
-    }
-
-    .search-icon{
-      position:absolute;
-      right:15px;
-      top:13px;
-      opacity:.7;
-    }
-
-    .header-actions{
-      display:flex;
-      gap:8px;
-    }
-
-    .icon-btn{
-      width:44px;
-      height:44px;
-      border-radius:13px;
-      border:1px solid var(--border);
-      background:var(--card);
-      color:var(--text);
-    }
-
-    .sell-btn,
-    .primary-btn{
-      border:0;
-      border-radius:13px;
-      padding:12px 17px;
+    body.light .hero {
       background:
-        linear-gradient(
-          135deg,
-          var(--red),
-          var(--red2)
-        );
-      color:#fff;
-      font-weight:800;
+        linear-gradient(90deg, rgba(255,255,255,.97), rgba(255,255,255,.78), rgba(255,255,255,.25)),
+        url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85") center/cover;
     }
 
-    .secondary-btn{
-      border:1px solid var(--border);
-      border-radius:13px;
-      padding:12px 17px;
-      background:var(--card);
-      color:var(--text);
+    .hero-content {
+      padding: 55px;
+      max-width: 720px;
+      position: relative;
+      z-index: 2;
     }
 
-    /* ================= HERO ================= */
-
-    .hero{
-      margin:28px 0 50px;
-      min-height:440px;
-      border:1px solid var(--border);
-      border-radius:30px;
-      overflow:hidden;
-      position:relative;
-
-      background:
-        linear-gradient(
-          90deg,
-          rgba(5,5,5,.97) 0%,
-          rgba(5,5,5,.83) 43%,
-          rgba(5,5,5,.35) 100%
-        ),
-        url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85")
-        center/cover;
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      border-radius: 30px;
+      color: #ff5878;
+      background: rgba(255,23,68,.1);
+      border: 1px solid rgba(255,23,68,.3);
+      margin-bottom: 20px;
+      font-size: 13px;
     }
 
-    body.light .hero{
-      background:
-        linear-gradient(
-          90deg,
-          rgba(255,255,255,.97),
-          rgba(255,255,255,.78),
-          rgba(255,255,255,.25)
-        ),
-        url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85")
-        center/cover;
+    .hero h1 {
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: 1.1;
+      margin-bottom: 20px;
     }
 
-    .hero-content{
-      padding:55px;
-      max-width:720px;
-      position:relative;
-      z-index:2;
+    .hero h1 span {
+      color: var(--red);
     }
 
-    .hero-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:8px 14px;
-      border-radius:30px;
-      color:#ff5878;
-      background:rgba(255,23,68,.1);
-      border:1px solid rgba(255,23,68,.3);
-      margin-bottom:20px;
+    .hero p {
+      color: #c2c2c2;
+      line-height: 2;
+      font-size: 16px;
+      margin-bottom: 28px;
     }
 
-    .hero h1{
-      font-size:clamp(40px,7vw,72px);
-      line-height:1.05;
-      margin-bottom:20px;
+    body.light .hero p {
+      color: #444;
     }
 
-    .hero h1 span{
-      color:var(--red);
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    .hero p{
-      color:#c2c2c2;
-      line-height:2;
-      font-size:16px;
-      margin-bottom:28px;
+    /* SECTIONS */
+    section {
+      margin: 55px 0;
     }
 
-    body.light .hero p{
-      color:#444;
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 15px;
+      margin-bottom: 20px;
     }
 
-    .hero-buttons{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
+    .section-head h2 {
+      font-size: 26px;
     }
 
-    /* ================= SECTIONS ================= */
-
-    section{
-      margin:55px 0;
+    .section-head p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 7px;
     }
 
-    .section-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:end;
-      gap:15px;
-      margin-bottom:20px;
+    /* CATEGORIES */
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 13px;
     }
 
-    .section-head h2{
-      font-size:26px;
+    .category {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 20px;
+      padding: 22px 10px;
+      text-align: center;
+      transition: .2s;
+      cursor: pointer;
+      color: var(--text);
     }
 
-    .section-head p{
-      color:var(--muted);
-      font-size:13px;
-      margin-top:7px;
+    .category:hover, .category.active {
+      border-color: var(--red);
+      transform: translateY(-4px);
+      background: var(--card2);
     }
-
-    /* ================= CATEGORIES ================= */
 
-    .categories{
-      display:grid;
-      grid-template-columns:
-        repeat(6,1fr);
-      gap:13px;
+    .category-icon {
+      font-size: 31px;
+      margin-bottom: 10px;
     }
 
-    .category{
-      border:1px solid var(--border);
-      background:var(--card);
-      border-radius:20px;
-      padding:22px 10px;
-      text-align:center;
-      transition:.2s;
+    .category-name {
+      font-weight: bold;
+      font-size: 14px;
     }
 
-    .category:hover{
-      border-color:var(--red);
-      transform:translateY(-4px);
+    /* ADS */
+    .ads-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
     }
 
-    .category-icon{
-      font-size:31px;
-      margin-bottom:10px;
+    .ad-card {
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: .2s;
+      display: flex;
+      flex-direction: column;
     }
 
-    .category-name{
-      font-weight:bold;
-      font-size:14px;
+    .ad-card:hover {
+      transform: translateY(-4px);
+      border-color: #444;
+      box-shadow: var(--shadow);
     }
 
-    /* ================= ADS ================= */
-
-    .ads-grid{
-      display:grid;
-      grid-template-columns:
-        repeat(4,1fr);
-      gap:16px;
+    .ad-image {
+      height: 210px;
+      background: var(--card2);
+      position: relative;
+      overflow: hidden;
     }
 
-    .ad-card{
-      overflow:hidden;
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:20px;
-      transition:.2s;
+    .ad-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: .3s;
     }
 
-    .ad-card:hover{
-      transform:translateY(-4px);
-      border-color:#444;
-      box-shadow:var(--shadow);
+    .ad-card:hover .ad-image img {
+      transform: scale(1.05);
     }
 
-    .ad-image{
-      height:210px;
-      background:var(--card2);
-      position:relative;
+    .favorite {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 39px;
+      height: 39px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(0,0,0,.72);
+      color: white;
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+      transition: .2s;
     }
 
-    .ad-image img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
+    .favorite.active {
+      color: var(--red);
     }
 
-    .favorite{
-      position:absolute;
-      top:10px;
-      left:10px;
-      width:39px;
-      height:39px;
-      border:0;
-      border-radius:50%;
-      background:rgba(0,0,0,.72);
-      color:white;
-      font-size:20px;
+    .ad-body {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
 
-    .favorite.active{
-      color:var(--red);
+    .ad-title {
+      font-weight: 900;
+      margin-bottom: 8px;
+      font-size: 15px;
     }
 
-    .ad-body{
-      padding:15px;
+    .ad-description {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+      min-height: 40px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
-    .ad-title{
-      font-weight:900;
-      margin-bottom:8px;
+    .ad-footer {
+      margin-top: auto;
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid var(--border);
     }
 
-    .ad-description{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.7;
-      min-height:40px;
+    .ad-price {
+      color: var(--red);
+      font-weight: 900;
+      font-size: 15px;
     }
 
-    .ad-footer{
-      margin-top:14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
+    .ad-location {
+      color: var(--muted);
+      font-size: 11px;
     }
 
-    .ad-price{
-      color:var(--red);
-      font-weight:900;
+    .empty {
+      grid-column: 1 / -1;
+      min-height: 250px;
+      border: 1px dashed var(--border);
+      border-radius: 22px;
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
     }
 
-    .ad-location{
-      color:var(--muted);
-      font-size:11px;
+    .empty-icon {
+      font-size: 50px;
+      margin-bottom: 12px;
     }
 
-    .empty{
-      min-height:300px;
-      border:1px dashed #333;
-      border-radius:22px;
-      background:var(--card);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:30px;
+    .empty p {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
     }
 
-    .empty-icon{
-      font-size:60px;
-      margin-bottom:15px;
+    /* AI */
+    .ai {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
     }
 
-    .empty p{
-      color:var(--muted);
-      line-height:1.9;
-      margin:10px auto 20px;
-      max-width:450px;
+    .ai-top {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-
-    /* ================= AI ================= */
 
-    .ai{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:24px;
-      overflow:hidden;
+    .ai-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--red), #70001c);
+      font-weight: 900;
+      color: white;
+      font-size: 20px;
     }
 
-    .ai-top{
-      padding:20px;
-      border-bottom:1px solid var(--border);
-      display:flex;
-      align-items:center;
-      gap:12px;
+    .online {
+      color: var(--green);
+      font-size: 12px;
+      margin-top: 4px;
     }
 
-    .ai-logo{
-      width:48px;
-      height:48px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      background:
-        linear-gradient(
-          135deg,
-          var(--red),
-          #70001c
-        );
-      font-weight:900;
-      color:white;
+    .ai-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 430px;
     }
 
-    .online{
-      color:var(--green);
-      font-size:12px;
-      margin-top:4px;
+    .chat-sidebar {
+      border-left: 1px solid var(--border);
+      padding: 14px;
     }
 
-    .ai-layout{
-      display:grid;
-      grid-template-columns:240px 1fr;
-      min-height:430px;
+    .new-chat {
+      width: 100%;
+      border: 1px solid var(--red);
+      background: rgba(255,23,68,.08);
+      color: #ff5474;
+      padding: 11px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-weight: bold;
+      transition: .2s;
     }
 
-    .chat-sidebar{
-      border-left:1px solid var(--border);
-      padding:14px;
+    .new-chat:hover {
+      background: var(--red);
+      color: white;
     }
 
-    .new-chat{
-      width:100%;
-      border:1px solid var(--red);
-      background:rgba(255,23,68,.08);
-      color:#ff5474;
-      padding:11px;
-      border-radius:12px;
-      margin-bottom:12px;
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
     }
 
-    .chat-list{
-      display:flex;
-      flex-direction:column;
-      gap:7px;
+    .chat-item {
+      padding: 11px;
+      border-radius: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      transition: .2s;
     }
 
-    .chat-item{
-      padding:11px;
-      border-radius:11px;
-      color:var(--muted);
-      cursor:pointer;
+    .chat-item:hover, .chat-item.active {
+      color: var(--text);
+      background: var(--card2);
+      font-weight: bold;
     }
 
-    .chat-item:hover,
-    .chat-item.active{
-      color:white;
-      background:var(--card2);
+    .chat-main {
+      display: flex;
+      flex-direction: column;
     }
 
-    .chat-main{
-      display:flex;
-      flex-direction:column;
+    .messages {
+      flex: 1;
+      padding: 20px;
+      max-height: 340px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .messages{
-      flex:1;
-      padding:20px;
-      max-height:340px;
-      overflow:auto;
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      line-height: 1.8;
+      border-radius: 16px;
+      font-size: 14px;
+      white-space: pre-wrap;
     }
 
-    .message{
-      max-width:78%;
-      padding:11px 14px;
-      line-height:1.8;
-      border-radius:15px;
-      margin-bottom:10px;
-      white-space:pre-wrap;
+    .message.user {
+      margin-right: auto;
+      background: var(--red);
+      color: white;
+      border-bottom-right-radius: 4px;
     }
 
-    .message.user{
-      margin-right:auto;
-      background:var(--red);
-      color:white;
+    .message.ai {
+      margin-left: auto;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
     }
 
-    .message.ai{
-      margin-left:auto;
-      background:var(--card2);
-      border:1px solid var(--border);
+    .chat-input {
+      padding: 13px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
     }
 
-    .chat-input{
-      padding:13px;
-      border-top:1px solid var(--border);
-      display:flex;
-      gap:8px;
+    .chat-input input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--bg2);
+      color: var(--text);
+      padding: 12px;
+      outline: none;
     }
 
-    .chat-input input{
-      flex:1;
-      min-width:0;
-      border:1px solid var(--border);
-      border-radius:13px;
-      background:var(--bg2);
-      color:var(--text);
-      padding:12px;
-      outline:none;
+    .chat-input input:focus {
+      border-color: var(--red);
     }
 
-    .send-btn{
-      width:50px;
-      border:0;
-      border-radius:13px;
-      background:var(--red);
-      color:white;
+    .send-btn {
+      width: 50px;
+      border: 0;
+      border-radius: 13px;
+      background: var(--red);
+      color: white;
+      font-size: 16px;
     }
 
-    /* ================= FOOTER ================= */
+    /* FOOTER */
+    footer {
+      margin-top: 80px;
+      border-top: 1px solid var(--border);
+      padding: 35px 0;
+      background: var(--card);
+    }
 
-    footer{
-      margin-top:80px;
-      border-top:1px solid var(--border);
-      padding:35px 0;
+    .footer {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 30px;
     }
 
-    .footer{
-      display:grid;
-      grid-template-columns:
-        2fr 1fr 1fr 1fr;
-      gap:30px;
+    .footer h3 {
+      margin-bottom: 12px;
+      font-size: 16px;
     }
 
-    .footer h3{
-      margin-bottom:12px;
+    .footer p, .footer a {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 2;
+      display: block;
     }
 
-    .footer p,
-    .footer a{
-      color:var(--muted);
-      font-size:13px;
-      line-height:2;
+    .footer a:hover {
+      color: var(--red);
     }
 
-    /* ================= MODAL ================= */
+    /* MODAL */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(8px);
+    }
 
-    .modal{
-      position:fixed;
-      inset:0;
-      z-index:5000;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:15px;
-      background:rgba(0,0,0,.78);
-      backdrop-filter:blur(8px);
+    .modal.show {
+      display: flex;
     }
 
-    .modal.show{
-      display:flex;
+    .modal-box {
+      width: min(520px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
     }
 
-    .modal-box{
-      width:min(520px,100%);
-      max-height:90vh;
-      overflow:auto;
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:24px;
-      padding:24px;
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
     }
 
-    .modal-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:20px;
+    .close {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 11px;
+      background: var(--card2);
+      color: var(--text);
+      font-size: 21px;
+      display: grid;
+      place-items: center;
     }
 
-    .close{
-      width:38px;
-      height:38px;
-      border:0;
-      border-radius:11px;
-      background:var(--card2);
-      color:var(--text);
-      font-size:21px;
+    .close:hover {
+      background: var(--red);
+      color: white;
     }
 
-    .form-group{
-      margin-bottom:15px;
+    .form-group {
+      margin-bottom: 15px;
     }
 
-    .form-group label{
-      display:block;
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:7px;
+    .form-group label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 7px;
     }
 
-    .form-group input,
-    .form-group textarea,
-    .form-group select{
-      width:100%;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:var(--bg2);
-      color:var(--text);
-      outline:none;
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--text);
+      outline: none;
     }
 
-    .form-group textarea{
-      min-height:100px;
-      resize:vertical;
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--red);
     }
 
-    .google-btn{
-      width:100%;
-      padding:14px;
-      border:1px solid #ddd;
-      background:#fff;
-      color:#111;
-      border-radius:13px;
-      font-weight:bold;
-      margin-top:10px;
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
     }
 
-    .profile{
-      text-align:center;
+    .google-btn {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #111;
+      border-radius: 13px;
+      font-weight: bold;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .avatar{
-      width:85px;
-      height:85px;
-      object-fit:cover;
-      border-radius:50%;
-      border:3px solid var(--red);
-      margin-bottom:12px;
+    .profile {
+      text-align: center;
     }
 
-    .toast-container{
-      position:fixed;
-      left:18px;
-      bottom:18px;
-      z-index:9000;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
+    .avatar {
+      width: 85px;
+      height: 85px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid var(--red);
+      margin-bottom: 12px;
     }
 
-    .toast{
-      background:#171717;
-      color:white;
-      border-right:4px solid var(--red);
-      padding:13px 16px;
-      border-radius:12px;
-      min-width:230px;
-      box-shadow:var(--shadow);
+    .toast-container {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .hidden{
-      display:none!important;
+    .toast {
+      background: #171717;
+      color: white;
+      border-right: 4px solid var(--red);
+      padding: 13px 16px;
+      border-radius: 12px;
+      min-width: 230px;
+      box-shadow: var(--shadow);
+      animation: fadeIn .25s ease;
     }
 
-    /* ================= RESPONSIVE ================= */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
+    /* RESPONSIVE */
     @media(max-width:1000px){
-
-      .ads-grid{
-        grid-template-columns:
-          repeat(3,1fr);
-      }
-
-      .categories{
-        grid-template-columns:
-          repeat(3,1fr);
-      }
-
-      .footer{
-        grid-template-columns:
-          repeat(2,1fr);
-      }
+      .ads-grid { grid-template-columns: repeat(3, 1fr); }
+      .categories { grid-template-columns: repeat(3, 1fr); }
+      .footer { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media(max-width:700px){
-
-      .header{
-        flex-wrap:wrap;
-        padding:10px 0;
-      }
-
-      .search{
-        order:5;
-        flex-basis:100%;
-      }
-
-      .sell-btn{
-        display:none;
-      }
-
-      .hero-content{
-        padding:30px;
-      }
-
-      .hero{
-        min-height:430px;
-      }
-
-      .ads-grid{
-        grid-template-columns:
-          repeat(2,1fr);
-          gap:10px;
-      }
-
-      .ad-image{
-        height:165px;
-      }
-
-      .ai-layout{
-        grid-template-columns:1fr;
-      }
-
-      .chat-sidebar{
-        border-left:0;
-        border-bottom:1px solid var(--border);
-      }
-
-      .chat-list{
-        flex-direction:row;
-        overflow-x:auto;
-      }
-
-      .chat-item{
-        min-width:130px;
-      }
+      .header { flex-wrap: wrap; padding: 10px 0; }
+      .search { order: 5; flex-basis: 100%; }
+      .sell-btn { display: none; }
+      .hero-content { padding: 30px; }
+      .hero { min-height: 410px; }
+      .ads-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .ad-image { height: 160px; }
+      .ai-layout { grid-template-columns: 1fr; }
+      .chat-sidebar { border-left: 0; border-bottom: 1px solid var(--border); }
+      .chat-list { flex-direction: row; overflow-x: auto; }
+      .chat-item { min-width: 130px; }
     }
 
     @media(max-width:500px){
-
-      .logo{
-        min-width:auto;
-      }
-
-      .header-actions{
-        margin-right:auto;
-      }
-
-      .categories{
-        grid-template-columns:
-          repeat(2,1fr);
-      }
-
-      .hero h1{
-        font-size:43px;
-      }
-
-      .footer{
-        grid-template-columns:1fr;
-      }
+      .logo { min-width: auto; }
+      .header-actions { margin-right: auto; }
+      .categories { grid-template-columns: repeat(2, 1fr); }
+      .hero h1 { font-size: 40px; }
+      .footer { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+  <!-- HEADER -->
+  <header>
+    <div class="container header">
+      <a href="#" class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;">
+        <div class="logo-mark">Z</div>
+        Zivo
+      </a>
 
-<header>
-
-  <div class="container header">
-
-    <a href="#" class="logo">
-
-      <div class="logo-mark">
-        Z
+      <div class="search">
+        <span class="search-icon">🔎</span>
+        <input id="searchInput" type="search" placeholder="جستجوی کالا، موبایل، لپ‌تاپ و...">
       </div>
 
-      Zivo
-
-    </a>
-
-    <div class="search">
-
-      <span class="search-icon">
-        🔎
-      </span>
-
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="جستجوی کالا، موبایل، لپ‌تاپ و..."
-      >
-
-    </div>
-
-    <div class="header-actions">
-
-      <button
-        class="icon-btn"
-        id="themeBtn"
-        onclick="toggleTheme()"
-        title="تغییر حالت"
-      >
-        🌙
-      </button>
-
-      <button
-        class="icon-btn"
-        onclick="showFavorites()"
-        title="علاقه‌مندی‌ها"
-      >
-        ♡
-      </button>
-
-      <button
-        class="icon-btn"
-        onclick="openAccount()"
-        title="حساب"
-      >
-        👤
-      </button>
-
-      <button
-        class="sell-btn"
-        onclick="openSellModal()"
-      >
-        + ثبت آگهی
-      </button>
-
-    </div>
-
-  </div>
-
-</header>
-
-
-<main class="container">
-
-  <!-- ================= HERO ================= -->
-
-  <section class="hero">
-
-    <div class="hero-content">
-
-      <div class="hero-badge">
-        ✦ بازار آنلاین Zivo
+      <div class="header-actions">
+        <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="تغییر حالت">🌙</button>
+        <button class="icon-btn" onclick="showFavorites()" title="علاقه‌مندی‌ها">♡</button>
+        <button class="icon-btn" onclick="openAccount()" title="حساب">👤</button>
+        <button class="sell-btn" onclick="openSellModal()">+ ثبت آگهی</button>
       </div>
-
-      <h1>
-        خرید و فروش
-        <span>به سبک Zivo</span>
-      </h1>
-
-      <p>
-        کالاهای موردنظرت را پیدا کن،
-        آگهی خودت را ثبت کن و مستقیم با کاربران
-        در ارتباط باش.
-      </p>
-
-      <div class="hero-buttons">
-
-        <button
-          class="primary-btn"
-          onclick="scrollToAds()"
-        >
-          مشاهده آگهی‌ها
-        </button>
-
-        <button
-          class="secondary-btn"
-          onclick="openSellModal()"
-        >
-          ثبت آگهی جدید
-        </button>
-
-      </div>
-
     </div>
+  </header>
 
-  </section>
+  <main class="container">
 
-
-  <!-- ================= CATEGORIES ================= -->
-
-  <section>
-
-    <div class="section-head">
-
-      <div>
-        <h2>دسته‌بندی‌ها</h2>
-        <p>
-          سریع‌تر چیزی که می‌خواهی پیدا کن
-        </p>
-      </div>
-
-    </div>
-
-    <div class="categories">
-
-      <button class="category" onclick="filterCategory('موبایل')">
-        <div class="category-icon">📱</div>
-        <div class="category-name">موبایل</div>
-      </button>
-
-      <button class="category" onclick="filterCategory('لپ‌تاپ')">
-        <div class="category-icon">💻</div>
-        <div class="category-name">لپ‌تاپ</div>
-      </button>
-
-      <button class="category" onclick="filterCategory('گیمینگ')">
-        <div class="category-icon">🎮</div>
-        <div class="category-name">گیمینگ</div>
-      </button>
-
-      <button class="category" onclick="filterCategory('خودرو')">
-        <div class="category-icon">🚗</div>
-        <div class="category-name">خودرو</div>
-      </button>
-
-      <button class="category" onclick="filterCategory('خانه')">
-        <div class="category-icon">🏠</div>
-        <div class="category-name">خانه</div>
-      </button>
-
-      <button class="category" onclick="filterCategory('پوشاک')">
-        <div class="category-icon">👕</div>
-        <div class="category-name">پوشاک</div>
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- ================= ADS ================= -->
-
-  <section id="adsSection">
-
-    <div class="section-head">
-
-      <div>
-        <h2>آگهی‌های جدید</h2>
-
-        <p id="adsStatus">
-          در حال دریافت آگهی‌ها...
-        </p>
-      </div>
-
-      <button
-        class="secondary-btn"
-        onclick="loadAds()"
-      >
-        ↻ بروزرسانی
-      </button>
-
-    </div>
-
-    <div
-      id="adsGrid"
-      class="ads-grid"
-    ></div>
-
-  </section>
-
-
-  <!-- ================= AI ================= -->
-
-  <section>
-
-    <div class="section-head">
-
-      <div>
-        <h2>🤖 Zivo AI</h2>
-
-        <p>
-          دستیار هوشمند داخل Zivo
-        </p>
-      </div>
-
-    </div>
-
-    <div class="ai">
-
-      <div class="ai-top">
-
-        <div class="ai-logo">
-          Z
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">✦ بازار آنلاین Zivo</div>
+        <h1>خرید و فروش <span>به سبک Zivo</span></h1>
+        <p>کالاهای موردنظرت را پیدا کن، آگهی خودت را ثبت کن و مستقیم با کاربران در ارتباط باش.</p>
+        <div class="hero-buttons">
+          <button class="primary-btn" onclick="scrollToAds()">مشاهده آگهی‌ها</button>
+          <button class="secondary-btn" onclick="openSellModal()">ثبت آگهی جدید</button>
         </div>
+      </div>
+    </section>
 
+    <!-- CATEGORIES -->
+    <section>
+      <div class="section-head">
         <div>
-
-          <strong>
-            Zivo AI
-          </strong>
-
-          <div class="online">
-            ● آنلاین
-          </div>
-
+          <h2>دسته‌بندی‌ها</h2>
+          <p>سریع‌تر چیزی که می‌خواهی پیدا کن</p>
         </div>
-
+        <button class="secondary-btn" onclick="filterCategory('همه')">همه دسته‌ها</button>
       </div>
 
-      <div class="ai-layout">
+      <div class="categories" id="categoryContainer">
+        <button class="category" data-cat="موبایل" onclick="filterCategory('موبایل')">
+          <div class="category-icon">📱</div>
+          <div class="category-name">موبایل</div>
+        </button>
+        <button class="category" data-cat="لپ‌تاپ" onclick="filterCategory('لپ‌تاپ')">
+          <div class="category-icon">💻</div>
+          <div class="category-name">لپ‌تاپ</div>
+        </button>
+        <button class="category" data-cat="گیمینگ" onclick="filterCategory('گیمینگ')">
+          <div class="category-icon">🎮</div>
+          <div class="category-name">گیمینگ</div>
+        </button>
+        <button class="category" data-cat="خودرو" onclick="filterCategory('خودرو')">
+          <div class="category-icon">🚗</div>
+          <div class="category-name">خودرو</div>
+        </button>
+        <button class="category" data-cat="خانه" onclick="filterCategory('خانه')">
+          <div class="category-icon">🏠</div>
+          <div class="category-name">خانه</div>
+        </button>
+        <button class="category" data-cat="پوشاک" onclick="filterCategory('پوشاک')">
+          <div class="category-icon">👕</div>
+          <div class="category-name">پوشاک</div>
+        </button>
+      </div>
+    </section>
 
-        <aside class="chat-sidebar">
-
-          <button
-            class="new-chat"
-            onclick="newChat()"
-          >
-            ＋ گفت‌وگوی جدید
-          </button>
-
-          <div
-            id="chatList"
-            class="chat-list"
-          ></div>
-
-        </aside>
-
-        <div class="chat-main">
-
-          <div
-            id="messages"
-            class="messages"
-          ></div>
-
-          <div class="chat-input">
-
-            <input
-              id="chatInput"
-              placeholder="از Zivo AI بپرس..."
-            >
-
-            <button
-              class="send-btn"
-              onclick="sendMessage()"
-            >
-              ➤
-            </button>
-
-          </div>
-
+    <!-- ADS -->
+    <section id="adsSection">
+      <div class="section-head">
+        <div>
+          <h2>آگهی‌های جدید</h2>
+          <p id="adsStatus">در حال دریافت آگهی‌ها...</p>
         </div>
-
+        <button class="secondary-btn" onclick="loadAds()">↻ بروزرسانی</button>
       </div>
 
-    </div>
+      <div id="adsGrid" class="ads-grid"></div>
+    </section>
 
-  </section>
+    <!-- AI -->
+    <section id="aiSection">
+      <div class="section-head">
+        <div>
+          <h2>🤖 Zivo AI</h2>
+          <p>دستیار هوشمند داخل Zivo</p>
+        </div>
+      </div>
 
-</main>
+      <div class="ai">
+        <div class="ai-top">
+          <div class="ai-logo">Z</div>
+          <div>
+            <strong>Zivo AI</strong>
+            <div class="online">● آنلاین</div>
+          </div>
+        </div>
 
-
-<!-- ================= FOOTER ================= -->
-
-<footer>
-
-  <div class="container footer">
-
-    <div>
-
-      <h3>Zivo</h3>
-
-      <p>
-        بازار آنلاین خرید و فروش
-      </p>
-
-    </div>
-
-    <div>
-
-      <h3>دسترسی سریع</h3>
-
-      <a href="#adsSection">
-        آگهی‌ها
-      </a>
-
-      <a href="#" onclick="openSellModal();return false">
-        ثبت آگهی
-      </a>
-
-    </div>
-
-    <div>
-
-      <h3>حساب</h3>
-
-      <a href="#" onclick="openAccount();return false">
-        حساب کاربری
-      </a>
-
-      <a href="#" onclick="showFavorites();return false">
-        علاقه‌مندی‌ها
-      </a>
-
-    </div>
-
-    <div>
-
-      <h3>Zivo AI</h3>
-
-      <a href="#"
-         onclick="document.querySele
+        <div class="ai-layout">
+          <a
