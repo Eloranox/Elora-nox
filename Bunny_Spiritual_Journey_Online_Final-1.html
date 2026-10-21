@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بازی خرگوش و مسیر پاکی - هدایت و نور</title>
+    <!-- Tailwind CSS for modern responsive UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #064e3b 100%);
+            touch-action: manipulation;
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(251, 191, 36, 0.1);
+        }
+
+        /* Gold Gradient Text */
+        .gold-text {
+            background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Glowing Buttons */
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0f172a;
+            font-weight: 800;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-gold:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Keep the expanded start menu usable on small phone screens */
+        #startScreen {
+            overflow-y: auto;
+            align-items: flex-start;
+        }
+        #startScreen > .glass-panel {
+            max-height: calc(100dvh - 24px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        #startScreen > .glass-panel::-webkit-scrollbar { width: 5px; }
+        #startScreen > .glass-panel::-webkit-scrollbar-thumb {
+            background: rgba(245, 158, 11, 0.55);
+            border-radius: 8px;
+        }
+
+        /* Game Canvas */
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Touch Control Buttons */
+        .touch-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(251, 191, 36, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s ease, background-color 0.1s ease;
+        }
+
+        .touch-btn:active, .touch-btn.active {
+            background: rgba(245, 158, 11, 0.6);
+            border-color: #fef08a;
+            transform: scale(0.92);
+        }
+
+        /* Pulse Animations */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.05); }
+        }
+
+        .pulse-bg {
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="relative flex items-center justify-center overflow-hidden">
+
+    <!-- Canvas Background Game Layer -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Overlay HUD (In-Game Top Bar) -->
+    <div id="hud" class="hidden absolute top-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+        <!-- Hearts & Health -->
+        <div class="flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-2xl border border-amber-500/30 backdrop-blur-md pointer-events-auto">
+            <span class="text-sm font-semibold text-amber-200 ml-1">سلامتی:</span>
+            <div id="heartsContainer" class="flex gap-1 text-2xl">
+                <span>💖</span><span>💖</span><span>💖</span>
+            </div>
+        </div>
+
+        <!-- Current Score & High Score -->
+        <div class="flex items-center gap-4 bg-slate-900/80 px-5 py-2 rounded-2xl border border-amber-500/30 backdrop-blur-md pointer-events-auto">
+            <div class="text-right">
+                <div class="text-xs text-amber-300/80">امتیاز شما</div>
+                <div id="hudScore" class="text-2xl font-black text-amber-400">0</div>
+            </div>
+            <div class="w-px h-8 bg-amber-500/20"></div>
+            <div class="text-right">
+                <div class="text-xs text-emerald-300/80">رکورد کل</div>
+                <div id="hudHighScore" class="text-xl font-bold text-emerald-400">0</div>
+            </div>
+        </div>
+
+        <!-- Pause Button -->
+        <button id="pauseBtn" onclick="togglePause()" class="pointer-events-auto bg-slate-800/80 hover:bg-slate-700/80 text-amber-300 p-3 rounded-2xl border border-amber-500/30 backdrop-blur-md transition-all active:scale-95 shadow-lg">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- On-Screen Mobile Touch Controls -->
+    <div id="mobileControls" class="hidden absolute bottom-6 left-6 right-6 flex justify-between items-center z-10 pointer-events-none">
+        <!-- Left Movement Button -->
+        <button id="btnLeft" class="touch-btn pointer-events-auto w-20 h-20 sm:w-24 sm:h-24 rounded-full text-3xl flex items-center justify-center text-white shadow-2xl active:scale-90 select-none">
+            ⬅️
+        </button>
+        <!-- Right Movement Button -->
+        <button id="btnRight" class="touch-btn pointer-events-auto w-20 h-20 sm:w-24 sm:h-24 rounded-full text-3xl flex items-center justify-center text-white shadow-2xl active:scale-90 select-none">
+            ➡️
+        </button>
+    </div>
+
+    <!-- START MENU SCREEN -->
+    <div id="startScreen" class="absolute inset-0 z-20 flex items-center justify-center p-4">
+        <div class="absolute w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pulse-bg"></div>
+        <div class="absolute w-80 h-80 bg-amber-600/20 rounded-full blur-3xl pulse-bg" style="animation-delay: 2s;"></div>
+
+        <div class="glass-panel w-full max-w-lg p-6 sm:p-8 rounded-3xl text-center relative z-10 space-y-6">
+            <div>
+                <div class="text-5xl mb-2 animate-bounce">🐰✨</div>
+                <h1 class="text-3xl sm:text-4xl font-black gold-text tracking-wide">خرگوش و مسیر پاکی</h1>
+                <p class="text-amber-200/80 text-sm mt-2">جمع‌آوری برکات معنوی و دوری از وسوسه‌های شیطانی</p>
+            </div>
+
+            <!-- GOOGLE ACCOUNT + ONLINE LEADERBOARD -->
+            <div class="bg-slate-900/80 rounded-2xl p-4 border border-amber-500/30 space-y-3 text-right">
+                <h2 class="text-lg font-black text-amber-300">👤 حساب بازیکن</h2>
+
+                <div id="googleSignedOut">
+                    <p class="text-sm text-slate-300 mb-3">با حساب گوگل وارد شو تا نامت در جدول رکوردهای آنلاین نمایش داده شود.</p>
+                    <button id="googleLoginBtn" type="button" class="btn-gold w-full py-3 rounded-xl">🔐 ورود با Google</button>
+                </div>
+
+                <div id="googleSignedIn" class="hidden">
+                    <div class="flex items-center justify-center gap-3">
+                        <img id="googleAvatar" class="w-12 h-12 rounded-full border-2 border-amber-400 object-cover" alt="عکس بازیکن">
+                        <div class="min-w-0">
+                            <div id="googlePlayerName" class="font-bold text-amber-300 break-words"></div>
+                            <div id="googlePlayerEmail" class="text-xs text-slate-400 break-all"></div>
+                        </div>
+                    </div>
+                    <button id="googleLogoutBtn" type="button" class="w-full mt-3 py-2 rounded-xl bg-slate-700 text-white">خروج از حساب</button>
+                </div>
+
+                <form id="playerNameForm" class="hidden" autocomplete="off">
+                    <label for="playerNameInput" class="block text-sm text-amber-200">نام بازیکنت را انتخاب کن (۳ تا ۱۶ نویسه):</label>
+                    <input id="playerNameInput" type="text" minlength="3" maxlength="16" required placeholder="مثلاً Rabbit01" class="w-full mt-2 p-3 rounded-xl bg-slate-950 border border-amber-500/40 text-white" style="user-select:text;-webkit-user-select:text">
+                    <button type="submit" class="btn-gold w-full py-3 rounded-xl mt-2">ثبت نام بازیکن</button>
+                </form>
+                <p id="googleStatus" role="status" aria-live="polite" class="text-xs text-amber-200 break-words"></p>
+            </div>
+
+            <div class="bg-slate-900/80 rounded-2xl p-4 border border-amber-500/30 text-right">
+                <h2 class="text-lg font-black text-amber-300 mb-2">🏆 جدول رکوردهای آنلاین</h2>
+                <p class="text-xs text-slate-400 mb-3">بهترین امتیاز بازیکنان</p>
+                <div id="onlineLeaderboard" class="space-y-2 text-sm">
+                    <p class="text-slate-400">در حال اتصال به جدول...</p>
+                </div>
+                <p id="leaderboardStatus" role="status" class="text-xs text-amber-200 mt-3"></p>
+            </div>
+
+            <!-- Item Values Info Box -->
+            <div class="bg-slate-900/70 rounded-2xl p-4 border border-amber-500/20 text-xs sm:text-sm text-slate-200 space-y-2">
+                <div class="font-bold text-amber-300 mb-2 border-b border-amber-500/20 pb-1">راهنمای امتیازها و برکات:</div>
+                <div class="grid grid-cols-2 gap-2 text-right">
+                    <div class="flex items-center gap-2"><span>📖 قرآن کریم</span> <span class="text-emerald-400 font-bold ml-auto">+20</span></div>
+                    <div class="flex items-center gap-2"><span>🕌 مسجد / نماز</span> <span class="text-emerald-400 font-bold ml-auto">+15</span></div>
+                    <div class="flex items-center gap-2"><span>🕋 سجاده نماز</span> <span class="text-emerald-400 font-bold ml-auto">+12</span></div>
+                    <div class="flex items-center gap-2"><span>📿 تسبیح ذکر</span> <span class="text-emerald-400 font-bold ml-auto">+10</span></div>
+                </div>
+                <div class="border-t border-slate-700/60 pt-2 grid grid-cols-2 gap-2 text-right text-rose-300">
+                    <div class="flex items-center gap-2"><span>😈 وسوسه شیطان</span> <span class="text-rose-400 font-bold ml-auto">-1 قلب 💖</span></div>
+                    <div class="flex items-center gap-2"><span>🔥 آتش وسوسه</span> <span class="text-amber-400 font-bold ml-auto">-10 امتیاز / آسیب</span></div>
+                </div>
+            </div>
+
+            <!-- Record Display -->
+            <div class="flex justify-between items-center bg-amber-500/10 px-4 py-2.5 rounded-xl border border-amber-500/30 text-sm">
+                <span class="text-amber-200 font-semibold">بالاترین رکورد ثبت‌شده:</span>
+                <span id="startHighScore" class="font-black text-amber-400 text-lg">0</span>
+            </div>
+
+            <!-- Start Button -->
+            <button onclick="startGame()" class="btn-gold w-full py-4 rounded-2xl text-xl font-black tracking-wide flex items-center justify-center gap-3 group">
+                <span>شروع بازی</span>
+                <span class="text-2xl transition-transform group-hover:translate-x-[-4px]">🚀</span>
+            </button>
+
+            <div class="text-xs text-slate-300 bg-slate-900/50 p-2 rounded-lg border border-slate-700">
+                <b>کنترل حرکت:</b> دکمه سمت چپ ⬅️ برای حرکت به چپ | دکمه سمت راست ➡️ برای حرکت به راست
+            </div>
+        </div>
+    </div>
+
+    <!-- PAUSE MENU SCREEN -->
+    <div id="pauseScreen" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl text-center space-y-6">
+            <h2 class="text-3xl font-black gold-text">بازی متوقف شد</h2>
+            <p class="text-slate-300 text-sm">کمی استراحت کنید و با انرژی ادامه دهید!</p>
+
+            <div class="space-y-3">
+                <button onclick="togglePause()" class="btn-gold w-full py-3 rounded-xl font-bold">ادامه بازی ▷</button>
+                <button onclick="restartGame()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-200 border border-amber-500/30 font-bold transition">شروع دوباره 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameOverScreen" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-lg">
+        <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl text-center space-y-6">
+            <div class="text-6xl animate-bounce">💔</div>
+            <div>
+                <h2 class="text-3xl font-black text-rose-500 mb-1">فرصت‌ها به پایان رسید!</h2>
+                <p class="text-slate-300 text-sm">شیطان مانع راه شد، اما دوباره تلاش کن!</p>
+            </div>
+
+            <!-- Final Score Card -->
+            <div class="bg-slate-900/80 rounded-2xl p-4 border border-amber-500/30 space-y-3">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">امتیاز نهایی شما:</span>
+                    <span id="finalScore" class="text-2xl font-black text-amber-400">0</span>
+                </div>
+                <div class="h-px bg-slate-800"></div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">رکورد قبلی شما:</span>
+                    <span id="finalHighScore" class="text-xl font-bold text-emerald-400">0</span>
+                </div>
+                <div id="newRecordBadge" class="hidden bg-emerald-500/20 text-emerald-300 text-xs py-1.5 px-3 rounded-lg border border-emerald-500/40 font-bold">
+                    🎉 تبریک! رکورد جدید ثبت شد!
+                </div>
+            </div>
+
+            <!-- Retry Button -->
+            <button onclick="restartGame()" class="btn-gold w-full py-4 rounded-2xl text-xl font-black flex items-center justify-center gap-2">
+                <span>تلاش مجدد</span>
+                <span class="text-2xl">🔄</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        // --- Web Audio API Sound Synthesizer ---
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playCollect(type = 'good') {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                const now = this.ctx.currentTime;
+                if (type === 'quran') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'good') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                }
+            }
+
+            playHurt() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                const now = this.ctx.currentTime;
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(60, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+
+            playGameOver() {
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.6);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+
+                osc.start(now);
+                osc.stop(now + 0.6);
+            }
+        }
+
+        const audio = new SoundFX();
+
+        // Canvas Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Game State Variables
+        let isPlaying = false;
+        let isPaused = false;
+        let score = 0;
+        let health = 3;
+        let highScore = parseInt(localStorage.getItem('bunny_path_highscore') || '0');
+        let spawnTimer = 0;
+        let spawnInterval = 75;
+        let gameFrame = 0;
+
+        // Player Bunny Object
+        const player = {
+            x: 0,
+            y: 0,
+            width: 65,
+            height: 65,
+            speed: 10,
+            emoji: '🐰',
+            isHit: false,
+            hitTimer: 0
+        };
+
+        // Item Definitions
+        const ITEM_TYPES = [
+            { emoji: '📖', type: 'quran', score: 20, isBad: false, label: 'قرآن' },
+            { emoji: '🕌', type: 'mosque', score: 15, isBad: false, label: 'مسجد' },
+            { emoji: '🕋', type: 'mat', score: 12, isBad: false, label: 'سجاده' },
+            { emoji: '📿', type: 'tasbih', score: 10, isBad: false, label: 'تسبیح' },
+            { emoji: '✨', type: 'deed', score: 5, isBad: false, label: 'نیکی' },
+            { emoji: '😈', type: 'devil', score: 0, isBad: true, damage: 1, label: 'شیطان' },
+            { emoji: '🔥', type: 'fire', score: -10, isBad: true, damage: 1, label: 'وسوسه' }
+        ];
+
+        let fallingItems = [];
+        let particles = [];
+        let stars = [];
+
+        // Stars Background Initializer
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 60; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 1,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
+            }
+        }
+        initStars();
+
+        // Control Keys State
+        const moveState = { left: false, right: false };
+
+        // Keyboard Event Listeners (LEFT = move left, RIGHT = move right)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveState.left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveState.right = true;
+            if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') togglePause();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveState.left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveState.right = false;
+        });
+
+        // Touch Control Binding: Explicitly mapping LEFT button to move left, RIGHT button to move right
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+
+        function setupButtonControls(buttonElem, directionKey) {
+            const startHandler = (e) => {
+                e.preventDefault();
+                moveState[directionKey] = true;
+                buttonElem.classList.add('active');
+            };
+            const endHandler = (e) => {
+                e.preventDefault();
+                moveState[directionKey] = false;
+                buttonElem.classList.remove('active');
+            };
+
+            buttonElem.addEventListener('touchstart', startHandler, { passive: false });
+            buttonElem.addEventListener('touchend', endHandler, { passive: false });
+            buttonElem.addEventListener('touchcancel', endHandler, { passive: false });
+
+            buttonElem.addEventListener('mousedown', startHandler);
+            buttonElem.addEventListener('mouseup', endHandler);
+            buttonElem.addEventListener('mouseleave', endHandler);
+        }
+
+        setupButtonControls(btnLeft, 'left');   // Left button -> LEFT movement
+        setupButtonControls(btnRight, 'right'); // Right button -> RIGHT movement
+
+        // UI Highscore setup
+        document.getElementById('startHighScore').innerText = highScore;
+        document.getElementById('hudHighScore').innerText = highScore;
+
+        // Firebase module uses this bridge to sync the cloud record with the original game.
+        window.applyCloudBestScore = function (cloudScore) {
+            highScore = Math.max(highScore, Number(cloudScore) || 0);
+            localStorage.setItem('bunny_path_highscore', highScore.toString());
+            document.getElementById('startHighScore').innerText = highScore;
+            document.getElementById('hudHighScore').innerText = highScore;
+        };
+
+        // Start Game
+        function startGame() {
+            audio.init();
+            score = 0;
+            health = 3;
+            spawnInterval = 75;
+            fallingItems = [];
+            particles = [];
+            gameFrame = 0;
+            moveState.left = false;
+            moveState.right = false;
+
+            player.x = canvas.width / 2 - player.width / 2;
+            player.y = canvas.height - 110;
+
+            updateHUD();
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('hud').classList.remove('hidden');
+            document.getElementById('mobileControls').classList.remove('hidden');
+
+            isPlaying = true;
+            isPaused = false;
+        }
+
+        function restartGame() {
+            document.getElementById('pauseScreen').classList.add('hidden');
+            startGame();
+        }
+
+        function togglePause() {
+            if (!isPlaying) return;
+            isPaused = !isPaused;
+            const pauseModal = document.getElementById('pauseScreen');
+            if (isPaused) {
+                pauseModal.classList.remove('hidden');
+            } else {
+                pauseModal.classList.add('hidden');
+            }
+        }
+
+        // Particle Burst Effect
+        function createBurst(x, y, color = '#f59e0b', count = 12) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 4 + 2;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    size: Math.random() * 6 + 3,
+                    color: color,
+                    alpha: 1,
+                    decay: Math.random() * 0.03 + 0.02
+                });
+            }
+        }
+
+        // Spawn Items
+        function spawnItem() {
+            const rand = Math.random();
+            let selectedType;
+
+            if (rand < 0.20) selectedType = ITEM_TYPES[4];      // Deed (+5)
+            else if (rand < 0.40) selectedType = ITEM_TYPES[3]; // Tasbih (+10)
+            else if (rand < 0.55) selectedType = ITEM_TYPES[2]; // Prayer Mat (+12)
+            else if (rand < 0.70) selectedType = ITEM_TYPES[1]; // Mosque (+15)
+            else if (rand < 0.82) selectedType = ITEM_TYPES[0]; // Quran (+20)
+            else if (rand < 0.92) selectedType = ITEM_TYPES[6]; // Fire (-10)
+            else selectedType = ITEM_TYPES[5];                 // Devil (-1 Heart)
+
+            const size = 46;
+            const speed = 3.2 + Math.random() * 2.5 + Math.min(score / 80, 5);
+
+            fallingItems.push({
+                x: Math.random() * (canvas.width - size - 20) + 10,
+                y: -50,
+                size: size,
+                speed: speed,
+                rotation: 0,
+                rotSpeed: (Math.random() - 0.5) * 0.04,
+                ...selectedType
+            });
+        }
+
+        // Main Update Logic
+        function update() {
+            if (!isPlaying || isPaused) return;
+
+            gameFrame++;
+
+            // Movement Logic (Correct Directioning)
+            if (moveState.left) {
+                player.x -= player.speed;
+            }
+            if (moveState.right) {
+                player.x += player.speed;
+            }
+
+            // Screen Boundary Constraints
+            if (player.x < 10) player.x = 10;
+            if (player.x + player.width > canvas.width - 10) {
+                player.x = canvas.width - player.width - 10;
+            }
+
+            // Hit Flashing Timer
+            if (player.isHit) {
+                player.hitTimer--;
+                if (player.hitTimer <= 0) player.isHit = false;
+            }
+
+            // Spawning Items
+            spawnTimer++;
+            const adjustedInterval = Math.max(35, spawnInterval - Math.floor(score / 60));
+            if (spawnTimer >= adjustedInterval) {
+                spawnItem();
+                spawnTimer = 0;
+            }
+
+            // Items Movement & Collision
+            for (let i = fallingItems.length - 1; i >= 0; i--) {
+                const item = fallingItems[i];
+                item.y += item.speed;
+                item.rotation += item.rotSpeed;
+
+                // Collision Detection with Bunny
+                if (
+                    player.x < item.x + item.size &&
+                    player.x + player.width > item.x &&
+                    player.y < item.y + item.size &&
+                    player.y + player.height > item.y
+                ) {
+                    if (!item.isBad) {
+                        score += item.score;
+                        audio.playCollect(item.type === 'quran' ? 'quran' : 'good');
+                        createBurst(item.x + item.size / 2, item.y + item.size / 2, '#34d399', 14);
+                    } else {
+                        audio.playHurt();
+                        player.isHit = true;
+                        player.hitTimer = 20;
+
+                        if (item.type === 'devil') {
+                            health -= item.damage;
+                            createBurst(item.x + item.size / 2, item.y + item.size / 2, '#f43f5e', 18);
+                        } else if (item.type === 'fire') {
+                            score = Math.max(0, score + item.score);
+                            health -= 0.5;
+                            createBurst(item.x + item.size / 2, item.y + item.size / 2, '#f97316', 15);
+                        }
+
+                        if (health <= 0) {
+                            endGame();
+                            return;
+                        }
+                    }
+
+                    updateHUD();
+                    fallingItems.splice(i, 1);
+                    continue;
+                }
+
+                // Remove Offscreen Items
+                if (item.y > canvas.height + 60) {
+                    fallingItems.splice(i, 1);
+                }
+            }
+
+            // Update Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+
+            // Update Stars
+            stars.forEach(star => {
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0.2) star.speed = -star.speed;
+            });
+        }
+
+        // Render Canvas
+        function draw() {
+            // Background Linear Gradient
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGradient.addColorStop(0, '#0f172a');
+            bgGradient.addColorStop(0.6, '#1e1b4b');
+            bgGradient.addColorStop(1, '#064e3b');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Background Stars
+            stars.forEach(star => {
+                ctx.fillStyle = `rgba(254, 240, 138, ${Math.abs(star.alpha)})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Ground Grass / Path
+            const groundY = canvas.height - 40;
+            ctx.fillStyle = '#047857';
+            ctx.fillRect(0, groundY, canvas.width, 40);
+
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(0, groundY, canvas.width, 6);
+
+            // Render Particles
+            particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Render Falling Items
+            fallingItems.forEach(item => {
+                ctx.save();
+                ctx.translate(item.x + item.size / 2, item.y + item.size / 2);
+                ctx.rotate(item.rotation);
+                ctx.font = `${item.size}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(item.emoji, 0, 0);
+                ctx.restore();
+            });
+
+            // Render Bunny Character
+            ctx.save();
+            if (player.isHit) {
+                ctx.globalAlpha = (Math.floor(gameFrame / 4) % 2 === 0) ? 0.3 : 0.9;
+            }
+            ctx.font = `${player.width}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(player.emoji, player.x + player.width / 2, player.y + player.height + 10);
+            ctx.restore();
+        }
+
+        // Update HUD
+        function updateHUD() {
+            document.getElementById('hudScore').innerText = score;
+
+            const heartsContainer = document.getElementById('heartsContainer');
+            let heartsHTML = '';
+            const fullHearts = Math.floor(health);
+            const hasHalf = health % 1 !== 0;
+
+            for (let i = 0; i < fullHearts; i++) heartsHTML += '💖';
+            if (hasHalf) heartsHTML += '💔';
+
+            heartsContainer.innerHTML = heartsHTML || '💀';
+        }
+
+        // Game Over Logic
+        function endGame() {
+            isPlaying = false;
+            audio.playGameOver();
+
+            const isNewRecord = score > highScore;
+            if (isNewRecord) {
+                highScore = score;
+                localStorage.setItem('bunny_path_highscore', highScore.toString());
+                document.getElementById('newRecordBadge').classList.remove('hidden');
+            } else {
+                document.getElementById('newRecordBadge').classList.add('hidden');
+            }
+
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalHighScore').innerText = highScore;
+            document.getElementById('hudHighScore').innerText = highScore;
+            document.getElementById('startHighScore').innerText = highScore;
+
+            // Notify the Firebase module; original gameplay remains unchanged.
+            window.dispatchEvent(new CustomEvent('bunny-game-over', {
+                detail: { score: score, highScore: highScore }
+            }));
+
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('hud').classList.add('hidden');
+            document.getElementById('mobileControls').classList.add('hidden');
+        }
+
+        // Main Animation Loop
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        window.onload = () => {
+            loop();
+        };
+    </script>
+    <!-- FIREBASE: GOOGLE LOGIN, PLAYER PROFILE, LIVE LEADERBOARD, CLOUD BEST SCORE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import {
+            getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+            getRedirectResult, onAuthStateChanged, signOut
+        } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, runTransaction, serverTimestamp,
+            collection, query, orderBy, limit, onSnapshot
+        } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrMw31xVAszqXUvP6AiufOGL_6XdYoaM4",
+            authDomain: "myai-bd693.firebaseapp.com",
+            projectId: "myai-bd693",
+            storageBucket: "myai-bd693.firebasestorage.app",
+            messagingSenderId: "305975730704",
+            appId: "1:305975730704:web:9771b3873c59f638a06095",
+            measurementId: "G-N0VN5C976D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+        const $ = id => document.getElementById(id);
+
+        let currentUser = null;
+        let currentPlayer = null;
+        let stopLeaderboard = null;
+
+        function setStatus(message) {
+            $("googleStatus").textContent = message;
+        }
+
+        function showAuthError(error) {
+            console.error("Firebase Auth:", error);
+            const messages = {
+                "auth/unauthorized-domain": "دامنه سایت در Firebase مجاز نیست؛ Authorized domains را بررسی کن.",
+                "auth/operation-not-allowed": "ورود با Google در Firebase فعال نیست.",
+                "auth/popup-closed-by-user": "پنجره ورود بسته شد.",
+                "auth/network-request-failed": "اتصال اینترنت را بررسی کن."
+            };
+            setStatus(messages[error.code] || "خطای ورود: " + (error.message || error.code));
+        }
+
+        $("googleLoginBtn").addEventListener("click", async () => {
+            setStatus("در حال اتصال به گوگل...");
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                if (error.code === "auth/popup-blocked") {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                    } catch (redirectError) {
+                        showAuthError(redirectError);
+                    }
+                } else {
+                    showAuthError(error);
+                }
+            }
+        });
+
+        $("googleLogoutBtn").addEventListener("click", async () => {
+            try {
+                await signOut(auth);
+                setStatus("از حساب خارج شدی.");
+            } catch (error) {
+                showAuthError(error);
+            }
+        });
+
+        onAuthStateChanged(auth, async user => {
+            currentUser = user;
+            currentPlayer = null;
+            $("googleSignedOut").classList.toggle("hidden", Boolean(user));
+            $("googleSignedIn").classList.toggle("hidden", !user);
+            $("playerNameForm").classList.add("hidden");
+
+            if (stopLeaderboard) {
+                stopLeaderboard();
+                stopLeaderboard = null;
+            }
+
+            if (!user) {
+                $("onlineLeaderboard").textContent = "برای دیدن جدول آنلاین به اینترنت نیاز است.";
+                setStatus("برای ذخیره رکورد آنلاین با گوگل وارد شو.");
+                return;
+            }
+
+            $("googleAvatar").src = user.photoURL || "";
+            $("googlePlayerEmail").textContent = user.email || "";
+            $("googlePlayerName").textContent = "در حال بارگذاری پروفایل...";
+            setStatus("در حال دریافت پروفایل...");
+
+            try {
+                const playerRef = doc(db, "players", user.uid);
+                const playerSnap = await getDoc(playerRef);
+                if (auth.currentUser?.uid !== user.uid) return;
+
+                if (!playerSnap.exists()) {
+                    $("googlePlayerName").textContent = "بازیکن جدید";
+                    $("playerNameForm").classList.remove("hidden");
+                    setStatus("ورود موفق بود! نام بازیکنت را انتخاب کن.");
+                } else {
+                    currentPlayer = playerSnap.data();
+                    $("googlePlayerName").textContent = currentPlayer.name || "بازیکن";
+                    setStatus("حساب متصل شد؛ رکورد آنلاین فعال است. 🟢");
+                    if (typeof window.applyCloudBestScore === "function") {
+                        window.applyCloudBestScore(currentPlayer.bestScore || 0);
+                    }
+                }
+                startLeaderboard();
+            } catch (error) {
+                console.error("Loading player profile:", error);
+                setStatus("پروفایل بارگذاری نشد (" + (error.code || error.message || "خطای نامشخص") + ")؛ قوانین Firestore و اتصال را بررسی کن.");
+            }
+        });
+
+        $("playerNameForm").addEventListener("submit", async event => {
+            event.preventDefault();
+            const user = currentUser;
+            if (!user) return;
+
+            const name = $("playerNameInput").value.trim();
+            if (name.length < 3 || name.length > 16) {
+                setStatus("نام باید بین ۳ تا ۱۶ نویسه باشد.");
+                return;
+            }
+
+            setStatus("در حال ثبت پروفایل...");
+            try {
+                const playerRef = doc(db, "players", user.uid);
+                await runTransaction(db, async transaction => {
+                    const existing = await transaction.get(playerRef);
+                    if (existing.exists()) throw new Error("PROFILE_ALREADY_EXISTS");
+                    transaction.set(playerRef, {
+                        uid: user.uid,
+                        name,
+                        email: user.email || "",
+                        photoURL: user.photoURL || "",
+                        bestScore: 0,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                });
+
+                if (auth.currentUser?.uid !== user.uid) return;
+                currentPlayer = {
+                    uid: user.uid,
+                    name,
+                    email: user.email || "",
+                    photoURL: user.photoURL || "",
+                    bestScore: 0
+                };
+                $("googlePlayerName").textContent = name;
+                $("playerNameForm").classList.add("hidden");
+                setStatus("پروفایل ساخته شد! حالا بازی کن. 🐰");
+                startLeaderboard();
+            } catch (error) {
+                console.error("Creating player profile:", error);
+                setStatus(error.message === "PROFILE_ALREADY_EXISTS"
+                    ? "این پروفایل قبلاً ساخته شده؛ صفحه را تازه‌سازی کن."
+                    : "ساخت پروفایل ناموفق بود (" + (error.code || error.message || "خطای نامشخص") + ")؛ قوانین Firestore را بررسی کن.");
+            }
+        });
+
+        function startLeaderboard() {
+            if (stopLeaderboard) stopLeaderboard();
+            const leaderboardQuery = query(
+                collection(db, "players"),
+                orderBy("bestScore", "desc"),
+                limit(50)
+            );
+
+            stopLeaderboard = onSnapshot(leaderboardQuery, snapshot => {
+                const box = $("onlineLeaderboard");
+                box.replaceChildren();
+                const players = snapshot.docs
+                    .map(item => item.data())
+                    .filter(player => player.uid && player.name);
+
+                if (!players.length) {
+                    box.textContent = "هنوز بازیکنی رکورد آنلاین ثبت نکرده است.";
+                    return;
+                }
+
+                players.forEach((player, index) => {
+                    const row = document.createElement("div");
+                    row.className = "flex items-center gap-2 bg-slate-800/80 rounded-xl p-2";
+                    if (currentUser && player.uid === currentUser.uid) {
+                        row.classList.add("border", "border-amber-400");
+                    }
+
+                    if (player.photoURL) {
+                        const avatar = document.createElement("img");
+                        avatar.src = player.photoURL;
+                        avatar.alt = "";
+                        avatar.loading = "lazy";
+                        avatar.className = "w-8 h-8 rounded-full object-cover";
+                        row.appendChild(avatar);
+                    } else {
+                        const avatarFallback = document.createElement("span");
+                        avatarFallback.textContent = "🐰";
+                        row.appendChild(avatarFallback);
+                    }
+
+                    const playerName = document.createElement("span");
+                    playerName.className = "flex-1 break-words";
+                    playerName.textContent = `${index + 1}. ${player.name}`;
+
+                    const playerScore = document.createElement("strong");
+                    playerScore.className = "text-amber-300";
+                    playerScore.textContent = String(Number(player.bestScore) || 0);
+                    row.append(playerName, playerScore);
+                    box.appendChild(row);
+                });
+                $("leaderboardStatus").textContent = "🟢 جدول به‌صورت زنده به‌روزرسانی می‌شود.";
+            }, error => {
+                console.error("Leaderboard:", error);
+                $("leaderboardStatus").textContent = "جدول بارگذاری نشد (" + (error.code || "خطای نامشخص") + ")؛ قوانین Firestore را بررسی کن.";
+            });
+        }
+
+        async function saveOnlineScore(finalScore) {
+            const user = currentUser;
+            if (!user || !currentPlayer) {
+                setStatus("برای ذخیره رکورد آنلاین، وارد حساب شو و نام بازیکن را ثبت کن.");
+                return;
+            }
+
+            // The game score is written only when it exceeds this player's saved best.
+            const safeScore = Math.max(0, Math.min(1000000, Math.floor(Number(finalScore) || 0)));
+            const playerRef = doc(db, "players", user.uid);
+            try {
+                await runTransaction(db, async transaction => {
+                    const playerSnap = await transaction.get(playerRef);
+                    if (!playerSnap.exists()) throw new Error("PROFILE_NOT_FOUND");
+                    const oldBest = Number(playerSnap.data().bestScore || 0);
+                    if (safeScore > oldBest) {
+                        transaction.update(playerRef, {
+                            bestScore: safeScore,
+                            updatedAt: serverTimestamp()
+                        });
+                    }
+                });
+
+                if (auth.currentUser?.uid === user.uid) {
+                    const updated = await getDoc(playerRef);
+                    if (updated.exists()) {
+                        currentPlayer = updated.data();
+                        if (typeof window.applyCloudBestScore === "function") {
+                            window.applyCloudBestScore(currentPlayer.bestScore || 0);
+                        }
+                    }
+                }
+                setStatus("رکوردت بررسی و در حساب آنلاین ذخیره شد! 🏆");
+            } catch (error) {
+                console.error("Saving score:", error);
+                setStatus("رکورد آنلاین ذخیره نشد (" + (error.code || error.message || "خطای نامشخص") + ")؛ اینترنت و قوانین Firestore را بررسی کن.");
+            }
+        }
+
+        window.addEventListener("bunny-game-over", event => {
+            saveOnlineScore(event.detail?.score);
+        });
+
+        try {
+            await getRedirectResult(auth);
+        } catch (error) {
+            showAuthError(error);
+        }
+    </script>
+</body>
+</html>
