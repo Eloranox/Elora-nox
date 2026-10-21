@@ -1,910 +1,388 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090909">
-  <title>Zivo | بازار آنلاین</title>
-
-  <style>
-    :root {
-      --bg: #070707;
-      --bg2: #0c0c0c;
-      --card: #111111;
-      --card2: #171717;
-      --border: #292929;
-      --text: #ffffff;
-      --muted: #999999;
-      --red: #ff1744;
-      --red2: #b9002c;
-      --green: #20d889;
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-    }
-
-    body.light {
-      --bg: #f5f5f7;
-      --bg2: #ffffff;
-      --card: #ffffff;
-      --card2: #eeeeef;
-      --border: #dedee2;
-      --text: #111111;
-      --muted: #666666;
-      --shadow: 0 15px 40px rgba(0,0,0,.08);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: Tahoma, Arial, sans-serif;
-      min-height: 100vh;
-      transition: background-color .25s, color .25s;
-    }
-
-    button, input, textarea, select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    img {
-      max-width: 100%;
-    }
-
-    .container {
-      width: min(1240px, 94%);
-      margin: auto;
-    }
-
-    /* HEADER */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      border-bottom: 1px solid var(--border);
-      background: rgba(7,7,7,.88);
-      backdrop-filter: blur(20px);
-    }
-
-    body.light header {
-      background: rgba(255,255,255,.88);
-    }
-
-    .header {
-      min-height: 74px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 25px;
-      font-weight: 900;
-      min-width: 110px;
-    }
-
-    .logo-mark {
-      width: 43px;
-      height: 43px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      color: #fff;
-      background: linear-gradient(145deg, #ff1744, #78001d);
-      box-shadow: 0 0 30px rgba(255,23,68,.28);
-    }
-
-    .search {
-      position: relative;
-      flex: 1;
-    }
-
-    .search input {
-      width: 100%;
-      height: 47px;
-      border-radius: 15px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      outline: none;
-      padding: 0 46px 0 16px;
-    }
-
-    .search input:focus {
-      border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(255,23,68,.08);
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 15px;
-      top: 13px;
-      opacity: .7;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 13px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      display: grid;
-      place-items: center;
-      font-size: 18px;
-      transition: .2s;
-    }
-
-    .icon-btn:hover {
-      border-color: var(--red);
-      color: var(--red);
-    }
-
-    .sell-btn, .primary-btn {
-      border: 0;
-      border-radius: 13px;
-      padding: 12px 17px;
-      background: linear-gradient(135deg, var(--red), var(--red2));
-      color: #fff;
-      font-weight: 800;
-      transition: .2s;
-    }
-
-    .sell-btn:hover, .primary-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255,23,68,.3);
-    }
-
-    .secondary-btn {
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 12px 17px;
-      background: var(--card);
-      color: var(--text);
-      font-weight: bold;
-      transition: .2s;
-    }
-
-    .secondary-btn:hover {
-      border-color: var(--red);
-    }
-
-    /* HERO */
-    .hero {
-      margin: 28px 0 50px;
-      min-height: 440px;
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      overflow: hidden;
-      position: relative;
-      background:
-        linear-gradient(90deg, rgba(5,5,5,.97) 0%, rgba(5,5,5,.83) 43%, rgba(5,5,5,.35) 100%),
-        url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85") center/cover;
-      display: flex;
-      align-items: center;
-    }
-
-    body.light .hero {
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.97), rgba(255,255,255,.78), rgba(255,255,255,.25)),
-        url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85") center/cover;
-    }
-
-    .hero-content {
-      padding: 55px;
-      max-width: 720px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 14px;
-      border-radius: 30px;
-      color: #ff5878;
-      background: rgba(255,23,68,.1);
-      border: 1px solid rgba(255,23,68,.3);
-      margin-bottom: 20px;
-      font-size: 13px;
-    }
-
-    .hero h1 {
-      font-size: clamp(38px, 6vw, 68px);
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
-
-    .hero h1 span {
-      color: var(--red);
-    }
-
-    .hero p {
-      color: #c2c2c2;
-      line-height: 2;
-      font-size: 16px;
-      margin-bottom: 28px;
-    }
-
-    body.light .hero p {
-      color: #444;
-    }
-
-    .hero-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    /* SECTIONS */
-    section {
-      margin: 55px 0;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .section-head h2 {
-      font-size: 26px;
-    }
-
-    .section-head p {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 7px;
-    }
-
-    /* CATEGORIES */
-    .categories {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 13px;
-    }
-
-    .category {
-      border: 1px solid var(--border);
-      background: var(--card);
-      border-radius: 20px;
-      padding: 22px 10px;
-      text-align: center;
-      transition: .2s;
-      cursor: pointer;
-      color: var(--text);
-    }
-
-    .category:hover, .category.active {
-      border-color: var(--red);
-      transform: translateY(-4px);
-      background: var(--card2);
-    }
-
-    .category-icon {
-      font-size: 31px;
-      margin-bottom: 10px;
-    }
-
-    .category-name {
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    /* ADS */
-    .ads-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .ad-card {
-      overflow: hidden;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      transition: .2s;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .ad-card:hover {
-      transform: translateY(-4px);
-      border-color: #444;
-      box-shadow: var(--shadow);
-    }
-
-    .ad-image {
-      height: 210px;
-      background: var(--card2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ad-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: .3s;
-    }
-
-    .ad-card:hover .ad-image img {
-      transform: scale(1.05);
-    }
-
-    .favorite {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 39px;
-      height: 39px;
-      border: 0;
-      border-radius: 50%;
-      background: rgba(0,0,0,.72);
-      color: white;
-      font-size: 20px;
-      display: grid;
-      place-items: center;
-      transition: .2s;
-    }
-
-    .favorite.active {
-      color: var(--red);
-    }
-
-    .ad-body {
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .ad-title {
-      font-weight: 900;
-      margin-bottom: 8px;
-      font-size: 15px;
-    }
-
-    .ad-description {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
-      min-height: 40px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .ad-footer {
-      margin-top: auto;
-      padding-top: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      border-top: 1px solid var(--border);
-    }
-
-    .ad-price {
-      color: var(--red);
-      font-weight: 900;
-      font-size: 15px;
-    }
-
-    .ad-location {
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .empty {
-      grid-column: 1 / -1;
-      min-height: 250px;
-      border: 1px dashed var(--border);
-      border-radius: 22px;
-      background: var(--card);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 30px;
-    }
-
-    .empty-icon {
-      font-size: 50px;
-      margin-bottom: 12px;
-    }
-
-    .empty p {
-      color: var(--muted);
-      line-height: 1.8;
-      font-size: 14px;
-    }
-
-    /* AI */
-    .ai {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      overflow: hidden;
-    }
-
-    .ai-top {
-      padding: 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .ai-logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--red), #70001c);
-      font-weight: 900;
-      color: white;
-      font-size: 20px;
-    }
-
-    .online {
-      color: var(--green);
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .ai-layout {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      min-height: 430px;
-    }
-
-    .chat-sidebar {
-      border-left: 1px solid var(--border);
-      padding: 14px;
-    }
-
-    .new-chat {
-      width: 100%;
-      border: 1px solid var(--red);
-      background: rgba(255,23,68,.08);
-      color: #ff5474;
-      padding: 11px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      font-weight: bold;
-      transition: .2s;
-    }
-
-    .new-chat:hover {
-      background: var(--red);
-      color: white;
-    }
-
-    .chat-list {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .chat-item {
-      padding: 11px;
-      border-radius: 11px;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 13px;
-      transition: .2s;
-    }
-
-    .chat-item:hover, .chat-item.active {
-      color: var(--text);
-      background: var(--card2);
-      font-weight: bold;
-    }
-
-    .chat-main {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .messages {
-      flex: 1;
-      padding: 20px;
-      max-height: 340px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .message {
-      max-width: 80%;
-      padding: 12px 16px;
-      line-height: 1.8;
-      border-radius: 16px;
-      font-size: 14px;
-      white-space: pre-wrap;
-    }
-
-    .message.user {
-      margin-right: auto;
-      background: var(--red);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-
-    .message.ai {
-      margin-left: auto;
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-bottom-left-radius: 4px;
-    }
-
-    .chat-input {
-      padding: 13px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 8px;
-    }
-
-    .chat-input input {
-      flex: 1;
-      min-width: 0;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      background: var(--bg2);
-      color: var(--text);
-      padding: 12px;
-      outline: none;
-    }
-
-    .chat-input input:focus {
-      border-color: var(--red);
-    }
-
-    .send-btn {
-      width: 50px;
-      border: 0;
-      border-radius: 13px;
-      background: var(--red);
-      color: white;
-      font-size: 16px;
-    }
-
-    /* FOOTER */
-    footer {
-      margin-top: 80px;
-      border-top: 1px solid var(--border);
-      padding: 35px 0;
-      background: var(--card);
-    }
-
-    .footer {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 30px;
-    }
-
-    .footer h3 {
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-
-    .footer p, .footer a {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 2;
-      display: block;
-    }
-
-    .footer a:hover {
-      color: var(--red);
-    }
-
-    /* MODAL */
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 5000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      background: rgba(0,0,0,.78);
-      backdrop-filter: blur(8px);
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-box {
-      width: min(520px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: var(--shadow);
-    }
-
-    .modal-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .close {
-      width: 38px;
-      height: 38px;
-      border: 0;
-      border-radius: 11px;
-      background: var(--card2);
-      color: var(--text);
-      font-size: 21px;
-      display: grid;
-      place-items: center;
-    }
-
-    .close:hover {
-      background: var(--red);
-      color: white;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 7px;
-    }
-
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--bg2);
-      color: var(--text);
-      outline: none;
-    }
-
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-      border-color: var(--red);
-    }
-
-    .form-group textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .google-btn {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ddd;
-      background: #fff;
-      color: #111;
-      border-radius: 13px;
-      font-weight: bold;
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .profile {
-      text-align: center;
-    }
-
-    .avatar {
-      width: 85px;
-      height: 85px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 3px solid var(--red);
-      margin-bottom: 12px;
-    }
-
-    .toast-container {
-      position: fixed;
-      left: 18px;
-      bottom: 18px;
-      z-index: 9000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .toast {
-      background: #171717;
-      color: white;
-      border-right: 4px solid var(--red);
-      padding: 13px 16px;
-      border-radius: 12px;
-      min-width: 230px;
-      box-shadow: var(--shadow);
-      animation: fadeIn .25s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* RESPONSIVE */
-    @media(max-width:1000px){
-      .ads-grid { grid-template-columns: repeat(3, 1fr); }
-      .categories { grid-template-columns: repeat(3, 1fr); }
-      .footer { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media(max-width:700px){
-      .header { flex-wrap: wrap; padding: 10px 0; }
-      .search { order: 5; flex-basis: 100%; }
-      .sell-btn { display: none; }
-      .hero-content { padding: 30px; }
-      .hero { min-height: 410px; }
-      .ads-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .ad-image { height: 160px; }
-      .ai-layout { grid-template-columns: 1fr; }
-      .chat-sidebar { border-left: 0; border-bottom: 1px solid var(--border); }
-      .chat-list { flex-direction: row; overflow-x: auto; }
-      .chat-item { min-width: 130px; }
-    }
-
-    @media(max-width:500px){
-      .logo { min-width: auto; }
-      .header-actions { margin-right: auto; }
-      .categories { grid-template-columns: repeat(2, 1fr); }
-      .hero h1 { font-size: 40px; }
-      .footer { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی خرگوش و مسیر پاکی - آنلاین</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50;
+            font-family: 'Tahoma', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow: auto;
+        }
+        #gameCanvas {
+            border: 4px solid #f1c40f;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #87CEEB, #e0f6ff);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .ui-box {
+            background: #34495e;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 350px;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: 'Tahoma', sans-serif;
+        }
+        button:hover { background-color: #219653; }
+        .google-btn { background-color: #db4437; }
+        .google-btn:hover { background-color: #c53727; }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 80%;
+            margin-top: 10px;
+            text-align: center;
+        }
+        #leaderboard {
+            margin-top: 15px;
+            background: #2c3e50;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: right;
+            font-size: 14px;
+        }
+        .hidden { display: none !important; }
+    </style>
+
+    <!-- کتابخانه‌های فایربیس (نسخه سازگار با ماژول‌های وب) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrMw31xVAszqXUvP6AiufOGL_6XdYoaM4",
+            authDomain: "myai-bd693.firebaseapp.com",
+            projectId: "myai-bd693",
+            storageBucket: "myai-bd693.firebasestorage.app",
+            messagingSenderId: "305975730704",
+            appId: "1:305975730704:web:9771b3873c59f638a06095",
+            measurementId: "G-N0VN5C976D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        let currentUser = null;
+        let username = "";
+
+        // المان‌های صفحه
+        const loginScreen = document.getElementById('login-screen');
+        const usernameScreen = document.getElementById('username-screen');
+        const menuScreen = document.getElementById('menu-screen');
+        const gameCanvas = document.getElementById('gameCanvas');
+        
+        document.getElementById('googleLoginBtn').addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                alert("خطا در ورود با گوگل: " + error.message);
+            }
+        });
+
+        document.getElementById('saveUsernameBtn').addEventListener('click', async () => {
+            const inputVal = document.getElementById('usernameInput').value.trim();
+            if (!inputVal) {
+                alert("لطفاً یک نام معتبر وارد کنید.");
+                return;
+            }
+            username = inputVal;
+            // ذخیره نام در دیتابیس برای این کاربر
+            await setDoc(doc(db, "users", currentUser.uid), { username: username }, { merge: true });
+            usernameScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+            loadLeaderboard();
+        });
+
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                loginScreen.classList.add('hidden');
+                
+                // بررسی اینکه آیا کاربر قبلاً اسم انتخاب کرده است یا خیر
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().username) {
+                    username = userDoc.data().username;
+                    menuScreen.classList.remove('hidden');
+                    loadLeaderboard();
+                } else {
+                    usernameScreen.classList.remove('hidden');
+                }
+            } else {
+                currentUser = null;
+                loginScreen.classList.remove('hidden');
+                usernameScreen.classList.add('hidden');
+                menuScreen.classList.add('hidden');
+                gameCanvas.style.display = 'none';
+            }
+        });
+
+        // بارگذاری جدول رکوردها
+        window.loadLeaderboard = async function() {
+            const listEl = document.getElementById('leaderboardList');
+            listEl.innerHTML = "در حال بارگذاری رکوردها...";
+            try {
+                const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(5));
+                const querySnapshot = await getDocs(q);
+                let html = "";
+                let rank = 1;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    html += `<li>${rank}. <b>${data.username}</b>: ${data.score} امتیاز</li>`;
+                    rank++;
+                });
+                listEl.innerHTML = html || "هنوز رکوردی ثبت نشده است.";
+            } catch (e) {
+                listEl.innerHTML = "خطا در دریافت رکوردها.";
+            }
+        }
+
+        // متد ثبت امتیاز در دیتابیس
+        window.saveScoreToFirebase = async function(finalScore) {
+            if (!currentUser) return;
+            try {
+                const userScoreRef = doc(db, "scores", currentUser.uid);
+                const docSnap = await getDoc(userScoreRef);
+                
+                // اگر رکورد جدید بیشتر از رکورد قبلی کاربر بود، آپدیت کن
+                if (!docSnap.exists() || finalScore > docSnap.data().score) {
+                    await setDoc(userScoreRef, {
+                        username: username,
+                        score: finalScore,
+                        uid: currentUser.uid,
+                        updatedAt: new Date()
+                    });
+                }
+                loadLeaderboard();
+            } catch (e) {
+                console.error("خطا در ذخیره امتیاز:", e);
+            }
+        }
+    </script>
 </head>
-
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="container header">
-      <a href="#" class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;">
-        <div class="logo-mark">Z</div>
-        Zivo
-      </a>
-
-      <div class="search">
-        <span class="search-icon">🔎</span>
-        <input id="searchInput" type="search" placeholder="جستجوی کالا، موبایل، لپ‌تاپ و...">
-      </div>
-
-      <div class="header-actions">
-        <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="تغییر حالت">🌙</button>
-        <button class="icon-btn" onclick="showFavorites()" title="علاقه‌مندی‌ها">♡</button>
-        <button class="icon-btn" onclick="openAccount()" title="حساب">👤</button>
-        <button class="sell-btn" onclick="openSellModal()">+ ثبت آگهی</button>
-      </div>
+    <!-- صفحه لاگین -->
+    <div id="login-screen" class="ui-box">
+        <h2>ورود به بازی خرگوش</h2>
+        <p>برای ثبت رکورد باید وارد شوید.</p>
+        <button id="googleLoginBtn" class="google-btn">ورود با حساب گوگل</button>
     </div>
-  </header>
 
-  <main class="container">
+    <!-- صفحه انتخاب نام -->
+    <div id="username-screen" class="ui-box hidden">
+        <h2>انتخاب نام مستعار</h2>
+        <p>لطفاً نامی که می‌خواهید در جدول رکوردها نمایش داده شود را وارد کنید:</p>
+        <input type="text" id="usernameInput" placeholder="مثلاً: قهرمان پاکی">
+        <br>
+        <button id="saveUsernameBtn">تایید و ورود به بازی</button>
+    </div>
 
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-content">
-        <div class="hero-badge">✦ بازار آنلاین Zivo</div>
-        <h1>خرید و فروش <span>به سبک Zivo</span></h1>
-        <p>کالاهای موردنظرت را پیدا کن، آگهی خودت را ثبت کن و مستقیم با کاربران در ارتباط باش.</p>
-        <div class="hero-buttons">
-          <button class="primary-btn" onclick="scrollToAds()">مشاهده آگهی‌ها</button>
-          <button class="secondary-btn" onclick="openSellModal()">ثبت آگهی جدید</button>
-        </div>
-      </div>
-    </section>
+    <!-- منوی اصلی و جدول رکوردها -->
+    <div id="menu-screen" class="ui-box hidden">
+        <h2>آماده بازی هستید؟</h2>
+        <button onclick="startGame()">شروع بازی 🎮</button>
+        <h3>🏆 جدول برترین‌ها</h3>
+        <ul id="leaderboardList" style="list-style: none; padding: 0;">
+            بارگذاری...
+        </ul>
+    </div>
 
-    <!-- CATEGORIES -->
-    <section>
-      <div class="section-head">
-        <div>
-          <h2>دسته‌بندی‌ها</h2>
-          <p>سریع‌تر چیزی که می‌خواهی پیدا کن</p>
-        </div>
-        <button class="secondary-btn" onclick="filterCategory('همه')">همه دسته‌ها</button>
-      </div>
+    <!-- بوم بازی -->
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
 
-      <div class="categories" id="categoryContainer">
-        <button class="category" data-cat="موبایل" onclick="filterCategory('موبایل')">
-          <div class="category-icon">📱</div>
-          <div class="category-name">موبایل</div>
-        </button>
-        <button class="category" data-cat="لپ‌تاپ" onclick="filterCategory('لپ‌تاپ')">
-          <div class="category-icon">💻</div>
-          <div class="category-name">لپ‌تاپ</div>
-        </button>
-        <button class="category" data-cat="گیمینگ" onclick="filterCategory('گیمینگ')">
-          <div class="category-icon">🎮</div>
-          <div class="category-name">گیمینگ</div>
-        </button>
-        <button class="category" data-cat="خودرو" onclick="filterCategory('خودرو')">
-          <div class="category-icon">🚗</div>
-          <div class="category-name">خودرو</div>
-        </button>
-        <button class="category" data-cat="خانه" onclick="filterCategory('خانه')">
-          <div class="category-icon">🏠</div>
-          <div class="category-name">خانه</div>
-        </button>
-        <button class="category" data-cat="پوشاک" onclick="filterCategory('پوشاک')">
-          <div class="category-icon">👕</div>
-          <div class="category-name">پوشاک</div>
-        </button>
-      </div>
-    </section>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-    <!-- ADS -->
-    <section id="adsSection">
-      <div class="section-head">
-        <div>
-          <h2>آگهی‌های جدید</h2>
-          <p id="adsStatus">در حال دریافت آگهی‌ها...</p>
-        </div>
-        <button class="secondary-btn" onclick="loadAds()">↻ بروزرسانی</button>
-      </div>
+        let score = 0;
+        let gameOver = false;
+        let gameRunning = false;
 
-      <div id="adsGrid" class="ads-grid"></div>
-    </section>
+        const player = {
+            x: canvas.width / 2 - 20,
+            y: canvas.height - 60,
+            width: 40,
+            height: 40,
+            speed: 7,
+            dx: 0
+        };
 
-    <!-- AI -->
-    <section id="aiSection">
-      <div class="section-head">
-        <div>
-          <h2>🤖 Zivo AI</h2>
-          <p>دستیار هوشمند داخل Zivo</p>
-        </div>
-      </div>
+        const items = [];
+        const itemTypes = [
+            { type: 'good', text: '📖', name: 'قرآن' },
+            { type: 'good', text: '🕋', name: 'نماز' },
+            { type: 'bad', text: '😈', name: 'شیطان' }
+        ];
 
-      <div class="ai">
-        <div class="ai-top">
-          <div class="ai-logo">Z</div>
-          <div>
-            <strong>Zivo AI</strong>
-            <div class="online">● آنلاین</div>
-          </div>
-        </div>
+        document.addEventListener('keydown', (e) => {
+            if (!gameRunning) return;
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                player.dx = -player.speed;
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                player.dx = player.speed;
+            } else if (gameOver && e.key === ' ') {
+                restartGame();
+            }
+        });
 
-        <div class="ai-layout">
-          <a
+        document.addEventListener('keyup', (e) => {
+            if (!gameRunning) return;
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'a' || e.key === 'd' || e.key === 'A' || e.key === 'D') {
+                player.dx = 0;
+            }
+        });
+
+        function startGame() {
+            document.getElementById('menu-screen').classList.add('hidden');
+            canvas.style.display = 'block';
+            gameRunning = true;
+            restartGame();
+            gameLoop();
+        }
+
+        function spawnItem() {
+            if (!gameRunning || gameOver) return;
+            const isGood = Math.random() > 0.35; 
+            const selectedType = isGood 
+                ? itemTypes[Math.floor(Math.random() * 2)] 
+                : itemTypes[2]; 
+
+            items.push({
+                x: Math.random() * (canvas.width - 30),
+                y: -30,
+                size: 30,
+                speed: 2 + Math.random() * 3 + (score / 50),
+                ...selectedType
+            });
+        }
+
+        setInterval(spawnItem, 1000);
+
+        function update() {
+            if (!gameRunning || gameOver) return;
+
+            player.x += player.dx;
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
+                item.y += item.speed;
+
+                if (
+                    player.x < item.x + item.size &&
+                    player.x + player.width > item.x &&
+                    player.y < item.y + item.size &&
+                    player.y + player.height > item.y
+                ) {
+                    if (item.type === 'good') {
+                        score += 10;
+                    } else if (item.type === 'bad') {
+                        gameOver = true;
+                        gameRunning = false;
+                        // ذخیره امتیاز در فایربیس
+                        if (typeof saveScoreToFirebase === 'function') {
+                            saveScoreToFirebase(score);
+                        }
+                    }
+                    items.splice(i, 1);
+                    continue;
+                }
+
+                if (item.y > canvas.height) {
+                    items.splice(i, 1);
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#2ecc71';
+            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+
+            ctx.font = '36px Arial';
+            ctx.fillText('🐰', player.x, player.y + 32);
+
+            for (const item of items) {
+                ctx.font = '28px Arial';
+                ctx.fillText(item.text, item.x, item.y);
+            }
+
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 20px Tahoma';
+            ctx.fillText(`امتیاز: ${score}`, 15, 30);
+
+            if (gameOver) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#e74c3c';
+                ctx.font = 'bold 36px Tahoma';
+                ctx.textAlign = 'center';
+                ctx.fillText('بازی تمام شد!', canvas.width / 2, canvas.height / 2 - 20);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '20px Tahoma';
+                ctx.fillText(`امتیاز نهایی: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+                ctx.fillText('برای بازگشت به منو و ثبت رکورد کلید Space را بزنید', canvas.width / 2, canvas.height / 2 + 60);
+                ctx.textAlign = 'start';
+            }
+        }
+
+        function restartGame() {
+            score = 0;
+            items.length = 0;
+            player.x = canvas.width / 2 - 20;
+            gameOver = false;
+            gameRunning = true;
+        }
+
+        // مدیریت زدن اسپیس برای بازگشت به منو بعد از باخت
+        window.addEventListener('keydown', (e) => {
+            if (gameOver && e.key === ' ') {
+                canvas.style.display = 'none';
+                document.getElementById('menu-screen').classList.remove('hidden');
+                if (typeof loadLeaderboard === 'function') loadLeaderboard();
+            }
+        });
+
+        function gameLoop() {
+            if (gameRunning) {
+                update();
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
+        }
+    </script>
+</body>
+</html>
