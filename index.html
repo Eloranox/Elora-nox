@@ -2,88 +2,287 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی خرگوش و مسیر پاکی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بازی خرگوش و مسیر پاکی - هدایت و نور</title>
+    <!-- Tailwind CSS for modern responsive UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body, html {
             margin: 0;
             padding: 0;
-            background-color: #2c3e50;
-            font-family: 'Tahoma', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            color: white;
-            overflow: auto;
-        }
-        #gameCanvas {
-            border: 4px solid #f1c40f;
-            border-radius: 10px;
-            background: linear-gradient(to bottom, #87CEEB, #e0f6ff);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            display: none;
-        }
-        .ui-box {
-            background: #34495e;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            width: 380px;
-            margin-bottom: 15px;
-        }
-        button {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-family: 'Tahoma', sans-serif;
             width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #064e3b 100%);
+            touch-action: manipulation;
         }
-        button:hover { background-color: #219653; }
-        .google-btn { background-color: #db4437; margin-bottom: 10px; }
-        .google-btn:hover { background-color: #c53727; }
-        .guest-btn { background-color: #7f8c8d; }
-        .guest-btn:hover { background-color: #707b7c; }
-        input {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 90%;
-            margin-top: 10px;
-            text-align: center;
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(251, 191, 36, 0.1);
         }
-        #leaderboard {
-            margin-top: 15px;
-            background: #2c3e50;
-            padding: 10px;
-            border-radius: 5px;
-            max-height: 150px;
-            overflow-y: auto;
-            text-align: right;
-            font-size: 14px;
+
+        /* Gold Gradient Text */
+        .gold-text {
+            background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
         }
-        .hidden { display: none !important; }
-        .user-status {
-            font-size: 13px;
-            color: #f1c40f;
-            margin-bottom: 10px;
+
+        /* Glowing Buttons */
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0f172a;
+            font-weight: 800;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-gold:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Game Canvas */
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Touch Control Buttons */
+        .touch-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(251, 191, 36, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s ease, background-color 0.1s ease;
+        }
+
+        .touch-btn:active, .touch-btn.active {
+            background: rgba(245, 158, 11, 0.6);
+            border-color: #fef08a;
+            transform: scale(0.92);
+        }
+
+        /* Custom Scrollbar for Leaderboard */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 8px;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.05); }
+        }
+
+        .pulse-bg {
+            animation: pulseGlow 4s infinite ease-in-out;
         }
     </style>
+</head>
+<body class="relative flex items-center justify-center overflow-hidden">
 
-    <!-- کتابخانه‌های فایربیس -->
+    <!-- Canvas Background Game Layer -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Overlay HUD (In-Game Top Bar) -->
+    <div id="hud" class="hidden absolute top-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+        <!-- Hearts & Health -->
+        <div class="flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-2xl border border-amber-500/30 backdrop-blur-md pointer-events-auto">
+            <span class="text-sm font-semibold text-amber-200 ml-1">سلامتی:</span>
+            <div id="heartsContainer" class="flex gap-1 text-2xl">
+                <span>💖</span><span>💖</span><span>💖</span>
+            </div>
+        </div>
+
+        <!-- Current Score & High Score -->
+        <div class="flex items-center gap-4 bg-slate-900/80 px-5 py-2 rounded-2xl border border-amber-500/30 backdrop-blur-md pointer-events-auto">
+            <div class="text-right">
+                <div class="text-xs text-amber-300/80">امتیاز شما</div>
+                <div id="hudScore" class="text-2xl font-black text-amber-400">0</div>
+            </div>
+            <div class="w-px h-8 bg-amber-500/20"></div>
+            <div class="text-right">
+                <div class="text-xs text-emerald-300/80">رکورد شما</div>
+                <div id="hudHighScore" class="text-xl font-bold text-emerald-400">0</div>
+            </div>
+        </div>
+
+        <!-- Pause Button -->
+        <button id="pauseBtn" onclick="togglePause()" class="pointer-events-auto bg-slate-800/80 hover:bg-slate-700/80 text-amber-300 p-3 rounded-2xl border border-amber-500/30 backdrop-blur-md transition-all active:scale-95 shadow-lg">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- On-Screen Mobile Touch Controls -->
+    <div id="mobileControls" class="hidden absolute bottom-6 left-6 right-6 flex justify-between items-center z-10 pointer-events-none">
+        <!-- Left Movement Button -->
+        <button id="btnLeft" class="touch-btn pointer-events-auto w-20 h-20 sm:w-24 sm:h-24 rounded-full text-3xl flex items-center justify-center text-white shadow-2xl active:scale-90 select-none">
+            ⬅️
+        </button>
+        <!-- Right Movement Button -->
+        <button id="btnRight" class="touch-btn pointer-events-auto w-20 h-20 sm:w-24 sm:h-24 rounded-full text-3xl flex items-center justify-center text-white shadow-2xl active:scale-90 select-none">
+            ➡️
+        </button>
+    </div>
+
+    <!-- START MENU SCREEN -->
+    <div id="startScreen" class="absolute inset-0 z-20 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="absolute w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pulse-bg"></div>
+        <div class="absolute w-80 h-80 bg-amber-600/20 rounded-full blur-3xl pulse-bg" style="animation-delay: 2s;"></div>
+
+        <div class="glass-panel w-full max-w-md p-5 sm:p-6 rounded-3xl text-center relative z-10 space-y-4 my-auto">
+            <div>
+                <div class="text-4xl mb-1 animate-bounce">🐰✨</div>
+                <h1 class="text-2xl sm:text-3xl font-black gold-text tracking-wide">خرگوش و مسیر پاکی</h1>
+                <p class="text-amber-200/80 text-xs mt-1">جمع‌آوری برکات معنوی و دوری از وسوسه‌های شیطانی</p>
+            </div>
+
+            <!-- Login / Player Account Bar -->
+            <div id="accountBar" class="bg-slate-900/90 rounded-2xl p-3 border border-amber-500/30 text-right">
+                <!-- Logged Out State -->
+                <div id="loggedOutState" class="flex items-center justify-between gap-2">
+                    <div class="text-xs text-slate-300">
+                        <span class="block text-amber-300 font-bold">ورود برای ثبت رکورد:</span>
+                        <span>مهمان (بدون ثبت آنلاین)</span>
+                    </div>
+                    <button id="googleLoginBtn" class="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1.5 shadow-md active:scale-95">
+                        <span>ورود با گوگل</span>
+                        <span>🔑</span>
+                    </button>
+                </div>
+
+                <!-- Logged In State -->
+                <div id="loggedInState" class="hidden flex items-center justify-between gap-2">
+                    <div class="text-xs">
+                        <span class="text-emerald-400 font-bold block">کاربر تاییدشده:</span>
+                        <span id="displayNickname" class="text-amber-200 font-extrabold text-sm">--</span>
+                    </div>
+                    <button id="logoutBtn" class="bg-slate-800 hover:bg-slate-700 text-rose-400 border border-rose-500/30 text-xs py-1.5 px-3 rounded-xl transition">
+                        خروج
+                    </button>
+                </div>
+            </div>
+
+            <!-- Global Leaderboard Box -->
+            <div class="bg-slate-900/80 rounded-2xl p-3 border border-amber-500/20 text-xs text-slate-200">
+                <div class="flex justify-between items-center mb-2 border-b border-amber-500/20 pb-1.5">
+                    <span class="font-bold text-amber-300">🏆 جدول برترین رکوردهای آنلاین</span>
+                    <span class="text-slate-400 text-[10px]">بروزرسانی زنده</span>
+                </div>
+                <ol id="leaderboardList" class="space-y-1.5 text-right max-h-28 overflow-y-auto pr-1">
+                    <li class="text-slate-400 text-center py-2">در حال دریافت برترین‌ها...</li>
+                </ol>
+            </div>
+
+            <!-- Start Game Button -->
+            <button onclick="startGame()" class="btn-gold w-full py-3.5 rounded-2xl text-lg font-black tracking-wide flex items-center justify-center gap-2 group">
+                <span>شروع بازی</span>
+                <span class="text-xl transition-transform group-hover:translate-x-[-4px]">🚀</span>
+            </button>
+
+            <div class="text-[11px] text-slate-300 bg-slate-900/50 p-2 rounded-lg border border-slate-700/60">
+                <b>کنترل حرکت:</b> دکمه چپ ⬅️ حرکت به چپ | دکمه راست ➡️ حرکت به راست
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CHOOSE NICKNAME SCREEN -->
+    <div id="nicknameModal" class="hidden absolute inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl text-center space-y-4">
+            <div class="text-4xl">👤</div>
+            <h2 class="text-2xl font-black gold-text">انتخاب نام بازیکن</h2>
+            <p class="text-xs text-amber-200/80">نامی که می‌خواهید در جدول رکوردهای آنلاین نمایش داده شود را وارد کنید (مثلاً: علی):</p>
+            
+            <input type="text" id="nicknameInput" maxlength="15" placeholder="نام شما (مثلاً: علی)" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-4 py-2.5 text-center text-amber-300 font-bold focus:outline-none focus:border-amber-400 text-sm">
+            
+            <button id="saveNicknameBtn" class="btn-gold w-full py-3 rounded-xl font-bold text-sm">
+                تایید و ثبت نام ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- PAUSE MENU SCREEN -->
+    <div id="pauseScreen" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl text-center space-y-6">
+            <h2 class="text-3xl font-black gold-text">بازی متوقف شد</h2>
+            <p class="text-slate-300 text-sm">کمی استراحت کنید و با انرژی ادامه دهید!</p>
+
+            <div class="space-y-3">
+                <button onclick="togglePause()" class="btn-gold w-full py-3 rounded-xl font-bold">ادامه بازی ▷</button>
+                <button onclick="restartGame()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-200 border border-amber-500/30 font-bold transition">شروع دوباره 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameOverScreen" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-lg">
+        <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl text-center space-y-5">
+            <div class="text-5xl animate-bounce">💔</div>
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black text-rose-500 mb-1">فرصت‌ها به پایان رسید!</h2>
+                <p class="text-slate-300 text-xs">شیطان مانع راه شد، اما دوباره تلاش کن!</p>
+            </div>
+
+            <!-- Final Score Card -->
+            <div class="bg-slate-900/80 rounded-2xl p-4 border border-amber-500/30 space-y-3">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">امتیاز نهایی شما:</span>
+                    <span id="finalScore" class="text-2xl font-black text-amber-400">0</span>
+                </div>
+                <div class="h-px bg-slate-800"></div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">رکورد قبلی شما:</span>
+                    <span id="finalHighScore" class="text-xl font-bold text-emerald-400">0</span>
+                </div>
+                <div id="newRecordBadge" class="hidden bg-emerald-500/20 text-emerald-300 text-xs py-1.5 px-3 rounded-lg border border-emerald-500/40 font-bold">
+                    🎉 تبریک! رکورد جدید در جدول ثبت شد!
+                </div>
+            </div>
+
+            <!-- Retry Button -->
+            <button onclick="restartGame()" class="btn-gold w-full py-3.5 rounded-2xl text-lg font-black flex items-center justify-center gap-2">
+                <span>تلاش مجدد</span>
+                <span class="text-xl">🔄</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- FIREBASE MODULE & GAME INTEGRATION -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, query, orderBy, limit, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBrMw31xVAszqXUvP6AiufOGL_6XdYoaM4",
             authDomain: "myai-bd693.firebaseapp.com",
@@ -99,322 +298,135 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        let currentUser = null;
-        let username = "";
+        window.firebaseUser = null;
+        window.playerNickname = localStorage.getItem('bunny_nickname') || "";
 
-        const loginScreen = document.getElementById('login-screen');
-        const usernameScreen = document.getElementById('username-screen');
-        const menuScreen = document.getElementById('menu-screen');
-        const gameCanvas = document.getElementById('gameCanvas');
-        const userStatusEl = document.getElementById('userStatus');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const loggedOutState = document.getElementById('loggedOutState');
+        const loggedInState = document.getElementById('loggedInState');
+        const displayNickname = document.getElementById('displayNickname');
+        const nicknameModal = document.getElementById('nicknameModal');
+        const nicknameInput = document.getElementById('nicknameInput');
 
-        // ورود با گوگل
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.firebaseUser = user;
+                loggedOutState.classList.add('hidden');
+                loggedInState.classList.remove('hidden');
+
+                // Check Firestore for user's nickname
+                const userDocRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userDocRef);
+
+                if (userSnap.exists() && userSnap.data().nickname) {
+                    window.playerNickname = userSnap.data().nickname;
+                    localStorage.setItem('bunny_nickname', window.playerNickname);
+                    displayNickname.innerText = window.playerNickname;
+                } else {
+                    // Prompt nickname modal if not registered yet
+                    nicknameModal.classList.remove('hidden');
+                }
+            } else {
+                window.firebaseUser = null;
+                loggedOutState.classList.remove('hidden');
+                loggedInState.classList.add('hidden');
+            }
+        });
+
+        // Google Login Button Click
         document.getElementById('googleLoginBtn').addEventListener('click', async () => {
             try {
                 await signInWithPopup(auth, provider);
-            } catch (error) {
-                alert("خطا در ورود با گوگل: " + error.message);
+            } catch (err) {
+                alert("خطا در ورود با گوگل: " + err.message);
             }
         });
 
-        // بازی به عنوان مهمان
-        document.getElementById('guestBtn').addEventListener('click', () => {
-            currentUser = null;
-            username = "مهمان";
-            loginScreen.classList.add('hidden');
-            usernameScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
-            userStatusEl.innerText = "شما به صورت مهمان وارد شده‌اید (رکوردها ثبت نمی‌شوند)";
-            logoutBtn.classList.add('hidden');
-            loadLeaderboard();
-        });
-
-        // خروج از حساب
-        logoutBtn.addEventListener('click', async () => {
+        // Logout Click
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
             await signOut(auth);
+            window.playerNickname = "";
+            localStorage.removeItem('bunny_nickname');
         });
 
-        // ثبت نام مستعار
-        document.getElementById('saveUsernameBtn').addEventListener('click', async () => {
-            const inputVal = document.getElementById('usernameInput').value.trim();
-            if (!inputVal) {
-                alert("لطفاً یک نام معتبر وارد کنید.");
+        // Save Nickname Button Click
+        document.getElementById('saveNicknameBtn').addEventListener('click', async () => {
+            const val = nicknameInput.value.trim();
+            if (!val) {
+                alert("لطفاً یک نام معتبر وارد کنید (مثلاً علی)");
                 return;
             }
-            username = inputVal;
-            await setDoc(doc(db, "users", currentUser.uid), { username: username }, { merge: true });
-            usernameScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
-            userStatusEl.innerText = `کاربر: ${username} (متصل به گوگل)`;
-            logoutBtn.classList.remove('hidden');
-            loadLeaderboard();
-        });
+            window.playerNickname = val;
+            localStorage.setItem('bunny_nickname', val);
+            displayNickname.innerText = val;
 
-        // وضعیت احراز هویت
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                loginScreen.classList.add('hidden');
-                
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists() && userDoc.data().username) {
-                    username = userDoc.data().username;
-                    usernameScreen.classList.add('hidden');
-                    menuScreen.classList.remove('hidden');
-                    userStatusEl.innerText = `کاربر: ${username} (متصل به گوگل)`;
-                    logoutBtn.classList.remove('hidden');
-                    loadLeaderboard();
-                } else {
-                    usernameScreen.classList.remove('hidden');
-                }
-            } else {
-                // اگر کاربر لاگین نبود، صفحه لاگین را نشان بده (یا بگذار مهمان بماند)
-                if (!username || username === "مهمان") {
-                    loginScreen.classList.remove('hidden');
-                    usernameScreen.classList.add('hidden');
-                    menuScreen.classList.add('hidden');
-                }
+            if (window.firebaseUser) {
+                await setDoc(doc(db, "users", window.firebaseUser.uid), { nickname: val }, { merge: true });
             }
+
+            nicknameModal.classList.add('hidden');
         });
 
-        // بارگذاری رکوردها
-        window.loadLeaderboard = async function() {
-            const listEl = document.getElementById('leaderboardList');
-            listEl.innerHTML = "در حال بارگذاری رکوردها...";
-            try {
-                const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(5));
-                const querySnapshot = await getDocs(q);
-                let html = "";
+        // Live Realtime Leaderboard Listener
+        function subscribeLeaderboard() {
+            const q = query(collection(db, "leaderboard"), orderBy("score", "desc"), limit(5));
+            onSnapshot(q, (snapshot) => {
+                const listEl = document.getElementById('leaderboardList');
+                if (snapshot.empty) {
+                    listEl.innerHTML = '<li class="text-slate-400 text-center">هنوز رکوردی ثبت نشده است</li>';
+                    return;
+                }
+                let html = '';
                 let rank = 1;
-                querySnapshot.forEach((docSnap) => {
+                snapshot.forEach(docSnap => {
                     const data = docSnap.data();
-                    html += `<li>${rank}. <b>${data.username}</b>: ${data.score} امتیاز</li>`;
+                    const rankBadge = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}.`;
+                    html += `
+                        <li class="flex justify-between items-center bg-slate-800/60 px-2.5 py-1 rounded-lg border border-slate-700/50">
+                            <span class="font-bold text-amber-200">${rankBadge} ${data.nickname || 'ناشناس'}</span>
+                            <span class="font-black text-emerald-400">${data.score} امتیاز</span>
+                        </li>
+                    `;
                     rank++;
                 });
-                listEl.innerHTML = html || "هنوز رکوردی ثبت نشده است.";
-            } catch (e) {
-                listEl.innerHTML = "خطا در دریافت رکوردها.";
-            }
-        }
-
-        // ذخیره امتیاز در فایربیس (فقط برای کاربران لاگین شده)
-        window.saveScoreToFirebase = async function(finalScore) {
-            if (!currentUser || username === "مهمان") return;
-            try {
-                const userScoreRef = doc(db, "scores", currentUser.uid);
-                const docSnap = await getDoc(userScoreRef);
-                
-                if (!docSnap.exists() || finalScore > docSnap.data().score) {
-                    await setDoc(userScoreRef, {
-                        username: username,
-                        score: finalScore,
-                        uid: currentUser.uid,
-                        updatedAt: new Date()
-                    });
-                }
-                loadLeaderboard();
-            } catch (e) {
-                console.error("خطا در ذخیره امتیاز:", e);
-            }
-        }
-    </script>
-</head>
-<body>
-
-    <!-- صفحه لاگین -->
-    <div id="login-screen" class="ui-box">
-        <h2>ورود به بازی خرگوش</h2>
-        <p>برای ثبت رکورد در جدول برترین‌ها وارد شوید، یا به عنوان مهمان بازی کنید.</p>
-        <button id="googleLoginBtn" class="google-btn">ورود با حساب گوگل</button>
-        <button id="guestBtn" class="guest-btn">ورود به عنوان مهمان (بدون ثبت رکورد)</button>
-    </div>
-
-    <!-- صفحه انتخاب نام -->
-    <div id="username-screen" class="ui-box hidden">
-        <h2>انتخاب نام مستعار</h2>
-        <p>نامی که می‌خواهید در جدول رکوردها نمایش داده شود را وارد کنید:</p>
-        <input type="text" id="usernameInput" placeholder="مثلاً: قهرمان پاکی">
-        <br>
-        <button id="saveUsernameBtn">تایید و ورود به بازی</button>
-    </div>
-
-    <!-- منوی اصلی و جدول رکوردها -->
-    <div id="menu-screen" class="ui-box hidden">
-        <div id="userStatus" class="user-status"></div>
-        <h2>آماده بازی هستید؟</h2>
-        <button onclick="startGame()">شروع بازی 🎮</button>
-        <button id="logoutBtn" style="background-color: #c0392b; margin-top: 5px;" class="hidden">خروج از حساب / تغییر اکانت</button>
-        <h3>🏆 جدول برترین‌ها</h3>
-        <ul id="leaderboardList" style="list-style: none; padding: 0;">
-            بارگذاری...
-        </ul>
-    </div>
-
-    <!-- بوم بازی -->
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
-
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        let score = 0;
-        let gameOver = false;
-        let gameRunning = false;
-
-        const player = {
-            x: canvas.width / 2 - 20,
-            y: canvas.height - 60,
-            width: 40,
-            height: 40,
-            speed: 7,
-            dx: 0
-        };
-
-        const items = [];
-        const itemTypes = [
-            { type: 'good', text: '📖', name: 'قرآن' },
-            { type: 'good', text: '🕋', name: 'نماز' },
-            { type: 'bad', text: '😈', name: 'شیطان' }
-        ];
-
-        // کنترل با کلیدها (چپ = حرکت به چپ، راست = حرکت به راست)
-        document.addEventListener('keydown', (e) => {
-            if (!gameRunning) return;
-            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-                player.dx = -player.speed;
-            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-                player.dx = player.speed;
-            } else if (gameOver && e.key === ' ') {
-                returnToMenu();
-            }
-        });
-
-        document.addEventListener('keyup', (e) => {
-            if (!gameRunning) return;
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'a' || e.key === 'd' || e.key === 'A' || e.key === 'D') {
-                player.dx = 0;
-            }
-        });
-
-        function startGame() {
-            document.getElementById('menu-screen').classList.add('hidden');
-            canvas.style.display = 'block';
-            gameRunning = true;
-            restartGame();
-            gameLoop();
-        }
-
-        function returnToMenu() {
-            canvas.style.display = 'none';
-            document.getElementById('menu-screen').classList.remove('hidden');
-            if (typeof loadLeaderboard === 'function') loadLeaderboard();
-        }
-
-        function spawnItem() {
-            if (!gameRunning || gameOver) return;
-            const isGood = Math.random() > 0.35; 
-            const selectedType = isGood 
-                ? itemTypes[Math.floor(Math.random() * 2)] 
-                : itemTypes[2]; 
-
-            items.push({
-                x: Math.random() * (canvas.width - 30),
-                y: -30,
-                size: 30,
-                speed: 2 + Math.random() * 3 + (score / 50),
-                ...selectedType
+                listEl.innerHTML = html;
+            }, (err) => {
+                console.error("Error loading leaderboard:", err);
             });
         }
+        subscribeLeaderboard();
 
-        setInterval(spawnItem, 1000);
+        // Submit Score Function
+        window.saveRecordToFirestore = async function(score) {
+            if (!window.firebaseUser || !window.playerNickname) return;
 
-        function update() {
-            if (!gameRunning || gameOver) return;
+            try {
+                const recordRef = doc(db, "leaderboard", window.firebaseUser.uid);
+                const recordSnap = await getDoc(recordRef);
 
-            player.x += player.dx;
-            if (player.x < 0) player.x = 0;
-            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-
-            for (let i = items.length - 1; i >= 0; i--) {
-                const item = items[i];
-                item.y += item.speed;
-
-                if (
-                    player.x < item.x + item.size &&
-                    player.x + player.width > item.x &&
-                    player.y < item.y + item.size &&
-                    player.y + player.height > item.y
-                ) {
-                    if (item.type === 'good') {
-                        score += 10;
-                    } else if (item.type === 'bad') {
-                        gameOver = true;
-                        gameRunning = false;
-                        if (typeof saveScoreToFirebase === 'function') {
-                            saveScoreToFirebase(score);
-                        }
-                    }
-                    items.splice(i, 1);
-                    continue;
+                if (!recordSnap.exists() || score > recordSnap.data().score) {
+                    await setDoc(recordRef, {
+                        nickname: window.playerNickname,
+                        score: score,
+                        uid: window.firebaseUser.uid,
+                        updatedAt: new Date()
+                    });
+                    document.getElementById('newRecordBadge').classList.remove('hidden');
                 }
-
-                if (item.y > canvas.height) {
-                    items.splice(i, 1);
-                }
+            } catch (err) {
+                console.error("Error saving score:", err);
             }
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#2ecc71';
-            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
-
-            ctx.font = '36px Arial';
-            ctx.fillText('🐰', player.x, player.y + 32);
-
-            for (const item of items) {
-                ctx.font = '28px Arial';
-                ctx.fillText(item.text, item.x, item.y);
-            }
-
-            ctx.fillStyle = '#2c3e50';
-            ctx.font = 'bold 20px Tahoma';
-            ctx.fillText(`امتیاز: ${score}`, 15, 30);
-
-            if (gameOver) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = '#e74c3c';
-                ctx.font = 'bold 36px Tahoma';
-                ctx.textAlign = 'center';
-                ctx.fillText('بازی تمام شد!', canvas.width / 2, canvas.height / 2 - 20);
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '20px Tahoma';
-                ctx.fillText(`امتیاز نهایی: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
-                ctx.fillText('برای بازگشت به منو و ثبت رکورد کلید Space را بزنید', canvas.width / 2, canvas.height / 2 + 60);
-                ctx.textAlign = 'start';
-            }
-        }
-
-        function restartGame() {
-            score = 0;
-            items.length = 0;
-            player.x = canvas.width / 2 - 20;
-            gameOver = false;
-            gameRunning = true;
-        }
-
-        function gameLoop() {
-            if (gameRunning) {
-                update();
-                draw();
-                requestAnimationFrame(gameLoop);
-            }
-        }
+        };
     </script>
-</body>
-</html>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        // --- Web Audio API Sound Synthesizer ---
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const Au
