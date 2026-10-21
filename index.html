@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی خرگوش و مسیر پاکی - آنلاین</title>
+    <title>بازی خرگوش و مسیر پاکی</title>
     <style>
         body {
             margin: 0;
@@ -31,7 +31,7 @@
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            width: 350px;
+            width: 380px;
             margin-bottom: 15px;
         }
         button {
@@ -44,16 +44,19 @@
             cursor: pointer;
             margin-top: 10px;
             font-family: 'Tahoma', sans-serif;
+            width: 100%;
         }
         button:hover { background-color: #219653; }
-        .google-btn { background-color: #db4437; }
+        .google-btn { background-color: #db4437; margin-bottom: 10px; }
         .google-btn:hover { background-color: #c53727; }
+        .guest-btn { background-color: #7f8c8d; }
+        .guest-btn:hover { background-color: #707b7c; }
         input {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            width: 80%;
+            width: 90%;
             margin-top: 10px;
             text-align: center;
         }
@@ -68,12 +71,17 @@
             font-size: 14px;
         }
         .hidden { display: none !important; }
+        .user-status {
+            font-size: 13px;
+            color: #f1c40f;
+            margin-bottom: 10px;
+        }
     </style>
 
-    <!-- کتابخانه‌های فایربیس (نسخه سازگار با ماژول‌های وب) -->
+    <!-- کتابخانه‌های فایربیس -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -94,12 +102,14 @@
         let currentUser = null;
         let username = "";
 
-        // المان‌های صفحه
         const loginScreen = document.getElementById('login-screen');
         const usernameScreen = document.getElementById('username-screen');
         const menuScreen = document.getElementById('menu-screen');
         const gameCanvas = document.getElementById('gameCanvas');
-        
+        const userStatusEl = document.getElementById('userStatus');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // ورود با گوگل
         document.getElementById('googleLoginBtn').addEventListener('click', async () => {
             try {
                 await signInWithPopup(auth, provider);
@@ -108,6 +118,24 @@
             }
         });
 
+        // بازی به عنوان مهمان
+        document.getElementById('guestBtn').addEventListener('click', () => {
+            currentUser = null;
+            username = "مهمان";
+            loginScreen.classList.add('hidden');
+            usernameScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+            userStatusEl.innerText = "شما به صورت مهمان وارد شده‌اید (رکوردها ثبت نمی‌شوند)";
+            logoutBtn.classList.add('hidden');
+            loadLeaderboard();
+        });
+
+        // خروج از حساب
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+        });
+
+        // ثبت نام مستعار
         document.getElementById('saveUsernameBtn').addEventListener('click', async () => {
             const inputVal = document.getElementById('usernameInput').value.trim();
             if (!inputVal) {
@@ -115,37 +143,42 @@
                 return;
             }
             username = inputVal;
-            // ذخیره نام در دیتابیس برای این کاربر
             await setDoc(doc(db, "users", currentUser.uid), { username: username }, { merge: true });
             usernameScreen.classList.add('hidden');
             menuScreen.classList.remove('hidden');
+            userStatusEl.innerText = `کاربر: ${username} (متصل به گوگل)`;
+            logoutBtn.classList.remove('hidden');
             loadLeaderboard();
         });
 
-        auth.onAuthStateChanged(async (user) => {
+        // وضعیت احراز هویت
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 loginScreen.classList.add('hidden');
                 
-                // بررسی اینکه آیا کاربر قبلاً اسم انتخاب کرده است یا خیر
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists() && userDoc.data().username) {
                     username = userDoc.data().username;
+                    usernameScreen.classList.add('hidden');
                     menuScreen.classList.remove('hidden');
+                    userStatusEl.innerText = `کاربر: ${username} (متصل به گوگل)`;
+                    logoutBtn.classList.remove('hidden');
                     loadLeaderboard();
                 } else {
                     usernameScreen.classList.remove('hidden');
                 }
             } else {
-                currentUser = null;
-                loginScreen.classList.remove('hidden');
-                usernameScreen.classList.add('hidden');
-                menuScreen.classList.add('hidden');
-                gameCanvas.style.display = 'none';
+                // اگر کاربر لاگین نبود، صفحه لاگین را نشان بده (یا بگذار مهمان بماند)
+                if (!username || username === "مهمان") {
+                    loginScreen.classList.remove('hidden');
+                    usernameScreen.classList.add('hidden');
+                    menuScreen.classList.add('hidden');
+                }
             }
         });
 
-        // بارگذاری جدول رکوردها
+        // بارگذاری رکوردها
         window.loadLeaderboard = async function() {
             const listEl = document.getElementById('leaderboardList');
             listEl.innerHTML = "در حال بارگذاری رکوردها...";
@@ -154,8 +187,8 @@
                 const querySnapshot = await getDocs(q);
                 let html = "";
                 let rank = 1;
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
                     html += `<li>${rank}. <b>${data.username}</b>: ${data.score} امتیاز</li>`;
                     rank++;
                 });
@@ -165,14 +198,13 @@
             }
         }
 
-        // متد ثبت امتیاز در دیتابیس
+        // ذخیره امتیاز در فایربیس (فقط برای کاربران لاگین شده)
         window.saveScoreToFirebase = async function(finalScore) {
-            if (!currentUser) return;
+            if (!currentUser || username === "مهمان") return;
             try {
                 const userScoreRef = doc(db, "scores", currentUser.uid);
                 const docSnap = await getDoc(userScoreRef);
                 
-                // اگر رکورد جدید بیشتر از رکورد قبلی کاربر بود، آپدیت کن
                 if (!docSnap.exists() || finalScore > docSnap.data().score) {
                     await setDoc(userScoreRef, {
                         username: username,
@@ -193,14 +225,15 @@
     <!-- صفحه لاگین -->
     <div id="login-screen" class="ui-box">
         <h2>ورود به بازی خرگوش</h2>
-        <p>برای ثبت رکورد باید وارد شوید.</p>
+        <p>برای ثبت رکورد در جدول برترین‌ها وارد شوید، یا به عنوان مهمان بازی کنید.</p>
         <button id="googleLoginBtn" class="google-btn">ورود با حساب گوگل</button>
+        <button id="guestBtn" class="guest-btn">ورود به عنوان مهمان (بدون ثبت رکورد)</button>
     </div>
 
     <!-- صفحه انتخاب نام -->
     <div id="username-screen" class="ui-box hidden">
         <h2>انتخاب نام مستعار</h2>
-        <p>لطفاً نامی که می‌خواهید در جدول رکوردها نمایش داده شود را وارد کنید:</p>
+        <p>نامی که می‌خواهید در جدول رکوردها نمایش داده شود را وارد کنید:</p>
         <input type="text" id="usernameInput" placeholder="مثلاً: قهرمان پاکی">
         <br>
         <button id="saveUsernameBtn">تایید و ورود به بازی</button>
@@ -208,8 +241,10 @@
 
     <!-- منوی اصلی و جدول رکوردها -->
     <div id="menu-screen" class="ui-box hidden">
+        <div id="userStatus" class="user-status"></div>
         <h2>آماده بازی هستید؟</h2>
         <button onclick="startGame()">شروع بازی 🎮</button>
+        <button id="logoutBtn" style="background-color: #c0392b; margin-top: 5px;" class="hidden">خروج از حساب / تغییر اکانت</button>
         <h3>🏆 جدول برترین‌ها</h3>
         <ul id="leaderboardList" style="list-style: none; padding: 0;">
             بارگذاری...
@@ -243,6 +278,7 @@
             { type: 'bad', text: '😈', name: 'شیطان' }
         ];
 
+        // کنترل با کلیدها (چپ = حرکت به چپ، راست = حرکت به راست)
         document.addEventListener('keydown', (e) => {
             if (!gameRunning) return;
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
@@ -250,7 +286,7 @@
             } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
                 player.dx = player.speed;
             } else if (gameOver && e.key === ' ') {
-                restartGame();
+                returnToMenu();
             }
         });
 
@@ -267,6 +303,12 @@
             gameRunning = true;
             restartGame();
             gameLoop();
+        }
+
+        function returnToMenu() {
+            canvas.style.display = 'none';
+            document.getElementById('menu-screen').classList.remove('hidden');
+            if (typeof loadLeaderboard === 'function') loadLeaderboard();
         }
 
         function spawnItem() {
@@ -309,7 +351,6 @@
                     } else if (item.type === 'bad') {
                         gameOver = true;
                         gameRunning = false;
-                        // ذخیره امتیاز در فایربیس
                         if (typeof saveScoreToFirebase === 'function') {
                             saveScoreToFirebase(score);
                         }
@@ -366,15 +407,6 @@
             gameOver = false;
             gameRunning = true;
         }
-
-        // مدیریت زدن اسپیس برای بازگشت به منو بعد از باخت
-        window.addEventListener('keydown', (e) => {
-            if (gameOver && e.key === ' ') {
-                canvas.style.display = 'none';
-                document.getElementById('menu-screen').classList.remove('hidden');
-                if (typeof loadLeaderboard === 'function') loadLeaderboard();
-            }
-        });
 
         function gameLoop() {
             if (gameRunning) {
