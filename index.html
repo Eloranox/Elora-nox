@@ -1,0 +1,312 @@
+```html
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بازی آموزش زبان انگلیسی | English Quest</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&family=Fredoka:wght@400;600;700&display=swap');
+        
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+            touch-action: manipulation;
+        }
+
+        .font-en {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* 3D Card Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        /* Audio Soundwave Pulse */
+        .speaking-pulse {
+            animation: pulse-ring 1.2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { box-shadow: 0 0 0 18px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col select-none overflow-x-hidden">
+
+    <!-- INITIAL AUDIO UNLOCK MODAL / START SCREEN -->
+    <div id="audio-unlock-overlay" class="fixed inset-0 z-50 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center p-6 text-center text-white">
+        <div class="max-w-md w-full bg-white/10 backdrop-blur-md p-8 rounded-3xl border border-white/20 shadow-2xl flex flex-col items-center">
+            <div class="w-24 h-24 bg-indigo-500/30 rounded-full flex items-center justify-center text-6xl mb-6 border-2 border-indigo-400/40 animate-bounce">
+                🎓
+            </div>
+            <h1 class="text-3xl font-black mb-2 font-en tracking-wider">English Quest</h1>
+            <p class="text-indigo-200 text-sm mb-8 leading-relaxed">به بازی آموزش انگلیسی خوش آمدید! برای فعال‌سازی کامل صدا و شروع بازی، روی دکمه زیر کلیک کنید.</p>
+            
+            <button onclick="startAppAndUnlockAudio()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-teal-900/50 hover:scale-105 active:scale-95 transition-all text-lg flex items-center justify-center gap-3">
+                <i class="fas fa-volume-up text-xl"></i>
+                <span>شروع بازی و فعال‌سازی صدا</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN APP HEADER -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-xl shadow-md font-bold">
+                    🚀
+                </div>
+                <div>
+                    <h2 class="font-black text-indigo-950 font-en text-lg leading-tight">English Quest</h2>
+                    <span class="text-xs text-slate-500 font-semibold">یادگیری آسان و هوشمند</span>
+                </div>
+            </div>
+
+            <!-- Header Tools (Score & Sound) -->
+            <div class="flex items-center gap-3">
+                <!-- Stars Score -->
+                <div class="bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+                    <span class="text-amber-500 text-base">⭐</span>
+                    <span id="score-counter" class="font-extrabold text-amber-700 text-sm">0</span>
+                </div>
+
+                <!-- Test Sound Manual Button -->
+                <button onclick="testAudioManual()" title="تست و پخش مجدد صدا" class="w-10 h-10 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center transition-all border border-indigo-200">
+                    <i class="fas fa-music"></i>
+                </button>
+
+                <!-- Sound Mute Toggle -->
+                <button id="sound-toggle-btn" onclick="toggleMute()" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition-all border border-slate-200">
+                    <i id="sound-toggle-icon" class="fas fa-volume-up"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 flex flex-col gap-4">
+
+        <!-- CATEGORY SELECTOR SLIDER -->
+        <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <span class="text-xs font-bold text-slate-400 pr-2 whitespace-nowrap">موضوع:</span>
+            <div class="flex gap-2 min-w-max">
+                <button onclick="selectCategory('animals')" id="cat-animals" class="cat-btn bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl text-xs md:text-sm shadow-md transition-all flex items-center gap-1.5">
+                    <span>🦁</span> <span>حیوانات</span>
+                </button>
+                <button onclick="selectCategory('colors')" id="cat-colors" class="cat-btn bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-xl text-xs md:text-sm hover:bg-slate-200 transition-all flex items-center gap-1.5">
+                    <span>🎨</span> <span>رنگ‌ها</span>
+                </button>
+                <button onclick="selectCategory('fruits')" id="cat-fruits" class="cat-btn bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-xl text-xs md:text-sm hover:bg-slate-200 transition-all flex items-center gap-1.5">
+                    <span>🍎</span> <span>میوه‌ها</span>
+                </button>
+                <button onclick="selectCategory('numbers')" id="cat-numbers" class="cat-btn bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-xl text-xs md:text-sm hover:bg-slate-200 transition-all flex items-center gap-1.5">
+                    <span>🔢</span> <span>اعداد</span>
+                </button>
+                <button onclick="selectCategory('vehicles')" id="cat-vehicles" class="cat-btn bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-xl text-xs md:text-sm hover:bg-slate-200 transition-all flex items-center gap-1.5">
+                    <span>🚗</span> <span>وسایل نقلیه</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MODE NAVIGATION TABS -->
+        <div class="grid grid-cols-3 gap-2">
+            <button onclick="switchMode('flashcards')" id="tab-flashcards" class="mode-tab bg-indigo-600 text-white py-3 rounded-2xl font-bold text-xs md:text-sm flex flex-col md:flex-row items-center justify-center gap-2 shadow-md border-b-4 border-indigo-800 transition-all">
+                <i class="fas fa-layer-group text-base md:text-lg"></i>
+                <span>فلش کارت</span>
+            </button>
+            <button onclick="switchMode('spelling')" id="tab-spelling" class="mode-tab bg-white text-slate-600 py-3 rounded-2xl font-bold text-xs md:text-sm flex flex-col md:flex-row items-center justify-center gap-2 shadow-md border-b-4 border-slate-200 transition-all">
+                <i class="fas fa-spell-check text-base md:text-lg text-purple-600"></i>
+                <span>ساخت کلمه</span>
+            </button>
+            <button onclick="switchMode('quiz')" id="tab-quiz" class="mode-tab bg-white text-slate-600 py-3 rounded-2xl font-bold text-xs md:text-sm flex flex-col md:flex-row items-center justify-center gap-2 shadow-md border-b-4 border-slate-200 transition-all">
+                <i class="fas fa-headphones text-base md:text-lg text-pink-600"></i>
+                <span>کوییز شنیداری</span>
+            </button>
+        </div>
+
+        <!-- ================= MODE 1: FLASHCARDS ================= -->
+        <section id="sec-flashcards" class="flex-grow flex flex-col items-center justify-center py-4">
+            <div class="w-full max-w-sm">
+                <!-- Progress Indicator -->
+                <div class="w-full bg-slate-200 h-2 rounded-full mb-3 overflow-hidden">
+                    <div id="fc-progress" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Card Structure -->
+                <div class="perspective-1000 w-full h-80 cursor-pointer" onclick="flipFlashcard()">
+                    <div id="fc-card-inner" class="transform-style-3d relative w-full h-full shadow-xl rounded-3xl">
+                        <!-- Front View (English) -->
+                        <div class="backface-hidden absolute inset-0 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 rounded-3xl p-6 flex flex-col items-center justify-between text-white border-4 border-white/20">
+                            <span class="text-[10px] bg-white/20 px-3 py-1 rounded-full text-indigo-100 font-semibold">لمس کنید تا معنی را ببینید</span>
+                            <div id="fc-emoji" class="text-8xl my-auto drop-shadow-md">🦁</div>
+                            <div class="text-center w-full">
+                                <h3 id="fc-word" class="text-4xl font-black font-en tracking-wider">Lion</h3>
+                                <p id="fc-phonetic" class="text-xs text-indigo-200 font-en mt-1">/ˈlaɪ.ən/</p>
+                            </div>
+                            <button id="fc-speaker-btn" onclick="speakCurrentWord(event)" class="mt-2 bg-white text-indigo-700 hover:bg-indigo-50 px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all">
+                                <i class="fas fa-volume-up text-sm"></i> <span>پخش تلفظ</span>
+                            </button>
+                        </div>
+                        <!-- Back View (Persian) -->
+                        <div class="backface-hidden rotate-y-180 absolute inset-0 bg-slate-800 rounded-3xl p-6 flex flex-col items-center justify-between text-white border-4 border-slate-700">
+                            <span class="text-[10px] bg-slate-700 px-3 py-1 rounded-full text-slate-300 font-semibold">معنی فارسی</span>
+                            <div class="my-auto text-center">
+                                <h4 id="fc-translation" class="text-4xl font-extrabold text-amber-400 mb-2">شیر</h4>
+                                <p id="fc-example" class="text-slate-300 text-sm font-en dir-ltr">"The lion is strong."</p>
+                            </div>
+                            <span class="text-[10px] text-slate-400">برای چرخش دوباره بزنید</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex justify-between items-center mt-6 gap-3">
+                    <button onclick="prevFlashcard()" class="flex-1 bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl border border-slate-200 shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95">
+                        <i class="fas fa-arrow-right"></i> <span>قبلی</span>
+                    </button>
+                    <span id="fc-counter" class="text-xs font-bold text-slate-500 min-w-[50px] text-center">1 / 5</span>
+                    <button onclick="nextFlashcard()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md shadow-indigo-200 flex items-center justify-center gap-2 transition-all active:scale-95">
+                        <span>بعدی</span> <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODE 2: SPELLING BUILDER ================= -->
+        <section id="sec-spelling" class="hidden flex-grow flex flex-col items-center justify-center py-4">
+            <div class="w-full max-w-md bg-white p-6 rounded-3xl shadow-xl border border-slate-200 flex flex-col items-center text-center">
+                <div id="spelling-emoji" class="text-7xl mb-2 animate-bounce">🦁</div>
+                <h4 class="text-slate-500 text-xs font-bold mb-4">حروف زیر را به ترتیب مرتب کنید</h4>
+
+                <!-- Word Display Slots -->
+                <div id="spelling-slots" class="flex gap-2 mb-6 min-h-[55px] flex-wrap justify-center items-center">
+                    <!-- Target letter slots generated here -->
+                </div>
+
+                <!-- Sound Hint Button -->
+                <button id="spelling-speaker-btn" onclick="speakCurrentSpellingWord()" class="mb-6 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all">
+                    <i class="fas fa-volume-up text-sm"></i> <span>شنیدن مجدد کلمه</span>
+                </button>
+
+                <!-- Scrambled Letter Bank -->
+                <div id="spelling-letters-bank" class="flex gap-2 flex-wrap justify-center max-w-xs mb-4">
+                    <!-- Scrambled letter buttons generated here -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3 w-full mt-4">
+                    <button onclick="resetSpellingWord()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-1.5">
+                        <i class="fas fa-rotate-right"></i> <span>پاک کردن</span>
+                    </button>
+                    <button onclick="checkSpellingResult()" class="flex-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-purple-200 transition-all text-xs flex items-center justify-center gap-1.5">
+                        <span>بررسی پاسخ</span> <i class="fas fa-check"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODE 3: LISTENING QUIZ ================= -->
+        <section id="sec-quiz" class="hidden flex-grow flex flex-col items-center justify-center py-4">
+            <div class="w-full max-w-md bg-white p-6 rounded-3xl shadow-xl border border-slate-200 flex flex-col items-center">
+                <div class="w-full flex justify-between items-center mb-4">
+                    <span class="text-xs font-extrabold text-pink-600 bg-pink-50 px-3 py-1 rounded-full border border-pink-100">کوییز شنیداری</span>
+                    <span id="quiz-progress-text" class="text-xs font-bold text-slate-400">سوال 1 از 5</span>
+                </div>
+
+                <!-- Big Sound Speaker Trigger -->
+                <button id="quiz-speaker-btn" onclick="playQuizAudio()" class="w-24 h-24 bg-gradient-to-tr from-pink-500 to-rose-400 text-white rounded-full flex items-center justify-center shadow-lg shadow-pink-200 hover:scale-105 active:scale-95 transition-all mb-3 border-4 border-white">
+                    <i id="quiz-speaker-icon" class="fas fa-volume-up text-4xl"></i>
+                </button>
+                <p class="text-xs text-slate-400 font-semibold mb-6">روی بلندگو بزنید تا تلفظ را بشنوید</p>
+
+                <!-- Multiple Choice Grid -->
+                <div id="quiz-options-container" class="grid grid-cols-2 gap-3 w-full">
+                    <!-- Options injected here dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- REWARD MODAL CELEBRATION -->
+    <div id="reward-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="reward-modal-card" class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl transform scale-90 opacity-0 transition-all duration-300 border border-slate-100">
+            <div class="text-6xl mb-3 animate-bounce">🏆</div>
+            <h3 class="text-2xl font-black text-slate-800 mb-1">فوق‌العاده بود!</h3>
+            <p class="text-xs text-slate-500 mb-6">شما تمامی کلمات این بخش را با موفقیت تمرین کردید.</p>
+            
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6">
+                <span class="text-xs text-amber-700 font-bold block mb-1">امتیاز دریافتی</span>
+                <span id="modal-score-added" class="text-3xl font-black text-amber-600">+50</span>
+            </div>
+
+            <button onclick="closeRewardModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition-all">
+                ادامه یادگیری
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP ENGINE -->
+    <script>
+        // ================= DATA STORE =================
+        const vocabularyData = {
+            animals: [
+                { word: "Lion", translation: "شیر", emoji: "🦁", phonetic: "/ˈlaɪ.ən/", example: "The lion is strong." },
+                { word: "Cat", translation: "گربه", emoji: "🐱", phonetic: "/kæt/", example: "The cat is cute." },
+                { word: "Dog", translation: "سگ", emoji: "🐶", phonetic: "/dɒɡ/", example: "The dog barks." },
+                { word: "Elephant", translation: "فیل", emoji: "🐘", phonetic: "/ˈel.ɪ.fənt/", example: "Elephants are big." },
+                { word: "Monkey", translation: "میمون", emoji: "🐒", phonetic: "/ˈmʌŋ.ki/", example: "Monkeys love bananas." }
+            ],
+            colors: [
+                { word: "Red", translation: "قرمز", emoji: "🔴", phonetic: "/red/", example: "Red is bright." },
+                { word: "Blue", translation: "آبی", emoji: "🔵", phonetic: "/bluː/", example: "The ocean is blue." },
+                { word: "Green", translation: "سبز", emoji: "🟢", phonetic: "/ɡriːn/", example: "Leaves are green." },
+                { word: "Yellow", translation: "زرد", emoji: "🟡", phonetic: "/ˈjel.əʊ/", example: "The sun is yellow." },
+                { word: "Purple", translation: "بنفش", emoji: "🟣", phonetic: "/ˈpɜː.pəl/", example: "I like purple flowers." }
+            ],
+            fruits: [
+                { word: "Apple", translation: "سیب", emoji: "🍎", phonetic: "/ˈæp.əl/", example: "Apples are sweet." },
+                { word: "Banana", translation: "موز", emoji: "🍌", phonetic: "/bəˈnɑː.nə/", example: "Bananas are yellow." },
+                { word: "Orange", translation: "پرتقال", emoji: "🍊", phonetic: "/ˈɒr.ɪndʒ/", example: "Orange juice is good." },
+                { word: "Strawberry", translation: "توت‌فرنگی", emoji: "🍓", phonetic: "/ˈstrɔː.bər.i/", example: "Strawberries are red." },
+                { word: "Watermelon", translation: "هندوانه", emoji: "🍉", phonetic: "/ˈwɔː.təˌmel.ən/", example: "Watermelon in summer." }
+            ],
+            numbers: [
+                { word: "One", translation: "یک", emoji: "1️⃣", phonetic: "/wʌ
